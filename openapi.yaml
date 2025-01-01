@@ -1,11 +1,10 @@
 openapi: 3.0.3
 info:
-  title: Users API
-  description: API for managing users in the system.
+  title: Event Scheduler API
+  description: API for scheduling events in the system.
   version: 1.0.0
   contact:
-    name: API Support
-    email: support@example.com
+    name: Kaustubh Maloo
 servers:
   - url: http://localhost:8080
     description: Local server
@@ -64,6 +63,173 @@ paths:
                 $ref: '#/components/schemas/User'
         '404':
           description: User not found.
+
+  /events:
+    post:
+      summary: Create a new event
+      operationId: CreateEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                organizer_id:
+                  type: integer
+                event_name:
+                  type: string
+                event_description:
+                  type: string
+              required:
+                - organizer_id
+                - event_name
+                - event_description
+      responses:
+        '201':
+          description: Event created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event_id:
+                    type: integer
+                  organizer_id:
+                    type: integer
+                  event_name:
+                    type: string
+                  event_description:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+  /events/{event_id}:
+    get:
+      summary: Get an event by ID
+      operationId: GetEventByID
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Event details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event_id:
+                    type: integer
+                  organizer_id:
+                    type: integer
+                  event_name:
+                    type: string
+                  event_description:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+        '404':
+          description: Event not found
+    put:
+      summary: Update an event's description
+      operationId: UpdateEventDescription
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_description:
+                  type: string
+              required:
+                - event_description
+      responses:
+        '204':
+          description: Event description updated successfully
+        '404':
+          description: Event not found
+    delete:
+      summary: Delete an event
+      operationId: DeleteEvent
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Event deleted successfully
+        '404':
+          description: Event not found
+  /events/list:
+    get:
+      summary: List all events
+      operationId: ListEvents
+      responses:
+        '200':
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: integer
+                    organizer_id:
+                      type: integer
+                    event_name:
+                      type: string
+                    event_description:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+  /events/organizer/{organizer_id}:
+    get:
+      summary: List events by organizer
+      operationId: ListEventsByOrganizer
+      parameters:
+        - name: organizer_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of events organized by the given organizer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: integer
+                    organizer_id:
+                      type: integer
+                    event_name:
+                      type: string
+                    event_description:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
 
 components:
   schemas:

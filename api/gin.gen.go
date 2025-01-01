@@ -13,6 +13,24 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Create a new event
+	// (POST /events)
+	CreateEvent(c *gin.Context)
+	// List all events
+	// (GET /events/list)
+	ListEvents(c *gin.Context)
+	// List events by organizer
+	// (GET /events/organizer/{organizer_id})
+	ListEventsByOrganizer(c *gin.Context, organizerId int)
+	// Delete an event
+	// (DELETE /events/{event_id})
+	DeleteEvent(c *gin.Context, eventId int)
+	// Get an event by ID
+	// (GET /events/{event_id})
+	GetEventByID(c *gin.Context, eventId int)
+	// Update an event's description
+	// (PUT /events/{event_id})
+	UpdateEventDescription(c *gin.Context, eventId int)
 	// List all users
 	// (GET /users)
 	GetUsers(c *gin.Context)
@@ -32,6 +50,128 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// CreateEvent operation middleware
+func (siw *ServerInterfaceWrapper) CreateEvent(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateEvent(c)
+}
+
+// ListEvents operation middleware
+func (siw *ServerInterfaceWrapper) ListEvents(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListEvents(c)
+}
+
+// ListEventsByOrganizer operation middleware
+func (siw *ServerInterfaceWrapper) ListEventsByOrganizer(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "organizer_id" -------------
+	var organizerId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "organizer_id", c.Param("organizer_id"), &organizerId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter organizer_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListEventsByOrganizer(c, organizerId)
+}
+
+// DeleteEvent operation middleware
+func (siw *ServerInterfaceWrapper) DeleteEvent(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "event_id" -------------
+	var eventId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "event_id", c.Param("event_id"), &eventId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter event_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteEvent(c, eventId)
+}
+
+// GetEventByID operation middleware
+func (siw *ServerInterfaceWrapper) GetEventByID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "event_id" -------------
+	var eventId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "event_id", c.Param("event_id"), &eventId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter event_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetEventByID(c, eventId)
+}
+
+// UpdateEventDescription operation middleware
+func (siw *ServerInterfaceWrapper) UpdateEventDescription(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "event_id" -------------
+	var eventId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "event_id", c.Param("event_id"), &eventId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter event_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateEventDescription(c, eventId)
+}
 
 // GetUsers operation middleware
 func (siw *ServerInterfaceWrapper) GetUsers(c *gin.Context) {
@@ -110,6 +250,12 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
+	router.POST(options.BaseURL+"/events", wrapper.CreateEvent)
+	router.GET(options.BaseURL+"/events/list", wrapper.ListEvents)
+	router.GET(options.BaseURL+"/events/organizer/:organizer_id", wrapper.ListEventsByOrganizer)
+	router.DELETE(options.BaseURL+"/events/:event_id", wrapper.DeleteEvent)
+	router.GET(options.BaseURL+"/events/:event_id", wrapper.GetEventByID)
+	router.PUT(options.BaseURL+"/events/:event_id", wrapper.UpdateEventDescription)
 	router.GET(options.BaseURL+"/users", wrapper.GetUsers)
 	router.POST(options.BaseURL+"/users", wrapper.PostUsers)
 	router.GET(options.BaseURL+"/users/:id", wrapper.GetUsersId)
