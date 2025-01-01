@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: Users API
+  description: API for managing users in the system.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+paths:
+  /users:
+    get:
+      summary: List all users
+      description: Retrieve a list of all users ordered by creation date.
+      responses:
+        '200':
+          description: A list of users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
+      description: Add a new user to the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      description: Retrieve a user by their unique ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found.
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - name
+        - created_at
+        - user_id
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        created_at:
+          type: string
+          format: date-time
+          example: 2023-12-31T12:34:56Z

@@ -22,4 +22,8 @@ test:
 server:
 	go run main.go
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test server
+codegen:
+	oapi-codegen -package=api -generate=gin openapi.yaml > api/gin.gen.go
+	oapi-codegen -package=api -generate=types openapi.yaml > api/types.gen.go
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test server codegen
