@@ -28,9 +28,33 @@ type ServerInterface interface {
 	// Get an event by ID
 	// (GET /events/{event_id})
 	GetEventByID(c *gin.Context, eventId int)
-	// Update an event's description
+	// Update an event's name, description or duration
 	// (PUT /events/{event_id})
-	UpdateEventDescription(c *gin.Context, eventId int)
+	UpdateEventDetails(c *gin.Context, eventId int)
+	// Get matching time slots for event
+	// (GET /matching-slots/event)
+	GetMatchingTimeSlotsForEvent(c *gin.Context, params GetMatchingTimeSlotsForEventParams)
+	// Delete an event time slot
+	// (DELETE /time-slots/event)
+	DeleteTimePreferenceEvent(c *gin.Context)
+	// Get time preferences by event
+	// (GET /time-slots/event)
+	GetTimePreferencesByEvent(c *gin.Context, params GetTimePreferencesByEventParams)
+	// Update an event time slot
+	// (PUT /time-slots/event)
+	UpdateTimePreferenceEvent(c *gin.Context)
+	// Delete a user time slot
+	// (DELETE /time-slots/user)
+	DeleteTimePreferenceUser(c *gin.Context)
+	// Get time preferences by user
+	// (GET /time-slots/user)
+	GetTimePreferencesByUser(c *gin.Context, params GetTimePreferencesByUserParams)
+	// Create time slots for a user
+	// (POST /time-slots/user)
+	CreateTimeSlotUser(c *gin.Context)
+	// Update a user time slot
+	// (PUT /time-slots/user)
+	UpdateTimePreferenceUser(c *gin.Context)
 	// List all users
 	// (GET /users)
 	GetUsers(c *gin.Context)
@@ -149,8 +173,8 @@ func (siw *ServerInterfaceWrapper) GetEventByID(c *gin.Context) {
 	siw.Handler.GetEventByID(c, eventId)
 }
 
-// UpdateEventDescription operation middleware
-func (siw *ServerInterfaceWrapper) UpdateEventDescription(c *gin.Context) {
+// UpdateEventDetails operation middleware
+func (siw *ServerInterfaceWrapper) UpdateEventDetails(c *gin.Context) {
 
 	var err error
 
@@ -170,7 +194,171 @@ func (siw *ServerInterfaceWrapper) UpdateEventDescription(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.UpdateEventDescription(c, eventId)
+	siw.Handler.UpdateEventDetails(c, eventId)
+}
+
+// GetMatchingTimeSlotsForEvent operation middleware
+func (siw *ServerInterfaceWrapper) GetMatchingTimeSlotsForEvent(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetMatchingTimeSlotsForEventParams
+
+	// ------------- Required query parameter "event_id" -------------
+
+	if paramValue := c.Query("event_id"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument event_id is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "event_id", c.Request.URL.Query(), &params.EventId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter event_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetMatchingTimeSlotsForEvent(c, params)
+}
+
+// DeleteTimePreferenceEvent operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTimePreferenceEvent(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteTimePreferenceEvent(c)
+}
+
+// GetTimePreferencesByEvent operation middleware
+func (siw *ServerInterfaceWrapper) GetTimePreferencesByEvent(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetTimePreferencesByEventParams
+
+	// ------------- Required query parameter "event_id" -------------
+
+	if paramValue := c.Query("event_id"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument event_id is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "event_id", c.Request.URL.Query(), &params.EventId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter event_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetTimePreferencesByEvent(c, params)
+}
+
+// UpdateTimePreferenceEvent operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTimePreferenceEvent(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateTimePreferenceEvent(c)
+}
+
+// DeleteTimePreferenceUser operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTimePreferenceUser(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteTimePreferenceUser(c)
+}
+
+// GetTimePreferencesByUser operation middleware
+func (siw *ServerInterfaceWrapper) GetTimePreferencesByUser(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetTimePreferencesByUserParams
+
+	// ------------- Required query parameter "user_id" -------------
+
+	if paramValue := c.Query("user_id"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument user_id is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "user_id", c.Request.URL.Query(), &params.UserId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter user_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetTimePreferencesByUser(c, params)
+}
+
+// CreateTimeSlotUser operation middleware
+func (siw *ServerInterfaceWrapper) CreateTimeSlotUser(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateTimeSlotUser(c)
+}
+
+// UpdateTimePreferenceUser operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTimePreferenceUser(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateTimePreferenceUser(c)
 }
 
 // GetUsers operation middleware
@@ -255,7 +443,15 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/events/organizer/:organizer_id", wrapper.ListEventsByOrganizer)
 	router.DELETE(options.BaseURL+"/events/:event_id", wrapper.DeleteEvent)
 	router.GET(options.BaseURL+"/events/:event_id", wrapper.GetEventByID)
-	router.PUT(options.BaseURL+"/events/:event_id", wrapper.UpdateEventDescription)
+	router.PUT(options.BaseURL+"/events/:event_id", wrapper.UpdateEventDetails)
+	router.GET(options.BaseURL+"/matching-slots/event", wrapper.GetMatchingTimeSlotsForEvent)
+	router.DELETE(options.BaseURL+"/time-slots/event", wrapper.DeleteTimePreferenceEvent)
+	router.GET(options.BaseURL+"/time-slots/event", wrapper.GetTimePreferencesByEvent)
+	router.PUT(options.BaseURL+"/time-slots/event", wrapper.UpdateTimePreferenceEvent)
+	router.DELETE(options.BaseURL+"/time-slots/user", wrapper.DeleteTimePreferenceUser)
+	router.GET(options.BaseURL+"/time-slots/user", wrapper.GetTimePreferencesByUser)
+	router.POST(options.BaseURL+"/time-slots/user", wrapper.CreateTimeSlotUser)
+	router.PUT(options.BaseURL+"/time-slots/user", wrapper.UpdateTimePreferenceUser)
 	router.GET(options.BaseURL+"/users", wrapper.GetUsers)
 	router.POST(options.BaseURL+"/users", wrapper.PostUsers)
 	router.GET(options.BaseURL+"/users/:id", wrapper.GetUsersId)

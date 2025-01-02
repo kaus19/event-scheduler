@@ -9,29 +9,24 @@ import (
 )
 
 type Querier interface {
-	AddEventParticipant(ctx context.Context, arg AddEventParticipantParams) error
 	CreateEvent(ctx context.Context, arg CreateEventParams) (Event, error)
-	CreateTimePreference(ctx context.Context, arg CreateTimePreferenceParams) (TimePreference, error)
+	CreateTimeSlotEvent(ctx context.Context, arg CreateTimeSlotEventParams) (TimeSlotsEvent, error)
+	CreateTimeSlotUser(ctx context.Context, arg CreateTimeSlotUserParams) (TimeSlotsUser, error)
 	CreateUser(ctx context.Context, name string) (User, error)
 	DeleteEvent(ctx context.Context, eventID int32) error
-	DeleteTimePreferenceByID(ctx context.Context, id int32) error
-	DeleteTimePreferenceByUnique(ctx context.Context, arg DeleteTimePreferenceByUniqueParams) error
-	DeleteUser(ctx context.Context, userID int32) error
+	DeleteTimePreferenceEvent(ctx context.Context, arg DeleteTimePreferenceEventParams) error
+	DeleteTimePreferenceUser(ctx context.Context, arg DeleteTimePreferenceUserParams) error
 	GetEventByID(ctx context.Context, eventID int32) (Event, error)
-	GetEventParticipants(ctx context.Context, eventID int32) ([]EventParticipant, error)
-	GetParticipantStatus(ctx context.Context, arg GetParticipantStatusParams) (EventParticipant, error)
-	GetTimePreferenceByID(ctx context.Context, id int32) (TimePreference, error)
-	GetTimePreferencesByOwner(ctx context.Context, arg GetTimePreferencesByOwnerParams) ([]TimePreference, error)
+	GetTimePreferencesByEvent(ctx context.Context, eventID int32) ([]TimeSlotsEvent, error)
+	GetTimePreferencesByUser(ctx context.Context, userID int32) ([]TimeSlotsUser, error)
+	GetTimePreferencesForAllUsers(ctx context.Context) ([]GetTimePreferencesForAllUsersRow, error)
 	GetUserByID(ctx context.Context, userID int32) (User, error)
 	ListEvents(ctx context.Context) ([]Event, error)
 	ListEventsByOrganizer(ctx context.Context, organizerID int32) ([]Event, error)
-	ListUserEvents(ctx context.Context, userID int32) ([]EventParticipant, error)
 	ListUsers(ctx context.Context) ([]User, error)
-	RemoveEventParticipant(ctx context.Context, arg RemoveEventParticipantParams) error
-	UpdateAttendanceStatus(ctx context.Context, arg UpdateAttendanceStatusParams) error
-	UpdateEventDescription(ctx context.Context, arg UpdateEventDescriptionParams) error
-	UpdateTimePreference(ctx context.Context, arg UpdateTimePreferenceParams) error
-	UpdateUserName(ctx context.Context, arg UpdateUserNameParams) error
+	UpdateEvent(ctx context.Context, arg UpdateEventParams) error
+	UpdateTimePreferenceEvent(ctx context.Context, arg UpdateTimePreferenceEventParams) error
+	UpdateTimePreferenceUser(ctx context.Context, arg UpdateTimePreferenceUserParams) error
 }
 
 var _ Querier = (*Queries)(nil)

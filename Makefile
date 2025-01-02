@@ -26,4 +26,7 @@ codegen:
 	oapi-codegen -package=api -generate=gin openapi.yaml > api/gin.gen.go
 	oapi-codegen -package=api -generate=types openapi.yaml > api/types.gen.go
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test server codegen
+mock:
+	mockgen -package mockdb -destination db/mock/store.go github.com/kaus19/event-scheduler/db/sqlc Store
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test server codegen mock

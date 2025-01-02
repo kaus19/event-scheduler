@@ -5,30 +5,31 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
 type Event struct {
-	EventID          int32          `json:"event_id"`
-	OrganizerID      int32          `json:"organizer_id"`
-	EventName        string         `json:"event_name"`
-	EventDescription sql.NullString `json:"event_description"`
-	CreatedAt        time.Time      `json:"created_at"`
+	EventID          int32     `json:"event_id"`
+	OrganizerID      int32     `json:"organizer_id"`
+	EventName        string    `json:"event_name"`
+	EventDescription string    `json:"event_description"`
+	Duration         int32     `json:"duration"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
-type EventParticipant struct {
-	EventID   int32        `json:"event_id"`
-	UserID    int32        `json:"user_id"`
-	CanAttend sql.NullBool `json:"can_attend"`
+type TimeSlotsEvent struct {
+	ID        int32     `json:"id"`
+	EventID   int32     `json:"event_id"`
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
 }
 
-type TimePreference struct {
-	ID        int32          `json:"id"`
-	OwnerType sql.NullString `json:"owner_type"`
-	OwnerID   int32          `json:"owner_id"`
-	StartTime time.Time      `json:"start_time"`
-	EndTime   time.Time      `json:"end_time"`
+type TimeSlotsUser struct {
+	ID        int32     `json:"id"`
+	UserID    int32     `json:"user_id"`
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
 }
 
 type User struct {

@@ -8,22 +8,22 @@ CREATE TABLE events (
     "event_id" SERIAL PRIMARY KEY,
     "organizer_id" INT NOT NULL REFERENCES users(user_id),
     "event_name" VARCHAR(200) NOT NULL,
-    "event_description" TEXT,
-    "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
+    "event_description" TEXT NOT NULL,
+    "duration" INT NOT NULL, -- In hours
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE time_preferences (
+CREATE TABLE time_slots_event (
     "id" SERIAL PRIMARY KEY,
-    "owner_type" VARCHAR(50) CHECK (owner_type IN ('user', 'event')),
-    "owner_id" INT NOT NULL, -- Links to user_id or event_id
+    "event_id" INT NOT NULL REFERENCES events(event_id),
     "start_time" TIMESTAMPTZ NOT NULL,
-    "end_time" TIMESTAMPTZ NOT NULL,
-    UNIQUE(owner_type, owner_id, start_time, end_time)
+    "end_time" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE event_participants (
-    "event_id" INT NOT NULL REFERENCES events(event_id),
+CREATE TABLE time_slots_user (
+    "id" SERIAL PRIMARY KEY,
     "user_id" INT NOT NULL REFERENCES users(user_id),
-    "can_attend" BOOLEAN DEFAULT NULL,
-    PRIMARY KEY (event_id, user_id)
+    "start_time" TIMESTAMPTZ NOT NULL,
+    "end_time" TIMESTAMPTZ NOT NULL
 );

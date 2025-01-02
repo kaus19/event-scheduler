@@ -22,16 +22,6 @@ func (q *Queries) CreateUser(ctx context.Context, name string) (User, error) {
 	return i, err
 }
 
-const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM users
-WHERE user_id = $1
-`
-
-func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
-	_, err := q.db.ExecContext(ctx, deleteUser, userID)
-	return err
-}
-
 const getUserByID = `-- name: GetUserByID :one
 SELECT user_id, name, created_at
 FROM users
@@ -72,20 +62,4 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateUserName = `-- name: UpdateUserName :exec
-UPDATE users
-SET name = $2
-WHERE user_id = $1
-`
-
-type UpdateUserNameParams struct {
-	UserID int32  `json:"user_id"`
-	Name   string `json:"name"`
-}
-
-func (q *Queries) UpdateUserName(ctx context.Context, arg UpdateUserNameParams) error {
-	_, err := q.db.ExecContext(ctx, updateUserName, arg.UserID, arg.Name)
-	return err
 }

@@ -16,14 +16,69 @@ type User struct {
 
 // CreateEventJSONBody defines parameters for CreateEvent.
 type CreateEventJSONBody struct {
-	EventDescription string `json:"event_description"`
-	EventName        string `json:"event_name"`
-	OrganizerId      int    `json:"organizer_id"`
+	Duration         int         `json:"duration"`
+	EndTime          []time.Time `json:"end_time"`
+	EventDescription string      `json:"event_description"`
+	EventName        string      `json:"event_name"`
+	OrganizerId      int         `json:"organizer_id"`
+	StartTime        []time.Time `json:"start_time"`
 }
 
-// UpdateEventDescriptionJSONBody defines parameters for UpdateEventDescription.
-type UpdateEventDescriptionJSONBody struct {
+// UpdateEventDetailsJSONBody defines parameters for UpdateEventDetails.
+type UpdateEventDetailsJSONBody struct {
+	Duration         int    `json:"duration"`
 	EventDescription string `json:"event_description"`
+	EventName        string `json:"event_name"`
+}
+
+// GetMatchingTimeSlotsForEventParams defines parameters for GetMatchingTimeSlotsForEvent.
+type GetMatchingTimeSlotsForEventParams struct {
+	EventId int `form:"event_id" json:"event_id"`
+}
+
+// DeleteTimePreferenceEventJSONBody defines parameters for DeleteTimePreferenceEvent.
+type DeleteTimePreferenceEventJSONBody struct {
+	EventId int `json:"event_id"`
+	Id      int `json:"id"`
+}
+
+// GetTimePreferencesByEventParams defines parameters for GetTimePreferencesByEvent.
+type GetTimePreferencesByEventParams struct {
+	EventId int `form:"event_id" json:"event_id"`
+}
+
+// UpdateTimePreferenceEventJSONBody defines parameters for UpdateTimePreferenceEvent.
+type UpdateTimePreferenceEventJSONBody struct {
+	EndTime   time.Time `json:"end_time"`
+	EventId   int       `json:"event_id"`
+	Id        int       `json:"id"`
+	StartTime time.Time `json:"start_time"`
+}
+
+// DeleteTimePreferenceUserJSONBody defines parameters for DeleteTimePreferenceUser.
+type DeleteTimePreferenceUserJSONBody struct {
+	Id     int `json:"id"`
+	UserId int `json:"user_id"`
+}
+
+// GetTimePreferencesByUserParams defines parameters for GetTimePreferencesByUser.
+type GetTimePreferencesByUserParams struct {
+	UserId int `form:"user_id" json:"user_id"`
+}
+
+// CreateTimeSlotUserJSONBody defines parameters for CreateTimeSlotUser.
+type CreateTimeSlotUserJSONBody struct {
+	EndTime   []time.Time `json:"end_time"`
+	StartTime []time.Time `json:"start_time"`
+	UserId    int         `json:"user_id"`
+}
+
+// UpdateTimePreferenceUserJSONBody defines parameters for UpdateTimePreferenceUser.
+type UpdateTimePreferenceUserJSONBody struct {
+	EndTime   time.Time `json:"end_time"`
+	Id        int       `json:"id"`
+	StartTime time.Time `json:"start_time"`
+	UserId    int       `json:"user_id"`
 }
 
 // PostUsersJSONBody defines parameters for PostUsers.
@@ -34,8 +89,23 @@ type PostUsersJSONBody struct {
 // CreateEventJSONRequestBody defines body for CreateEvent for application/json ContentType.
 type CreateEventJSONRequestBody CreateEventJSONBody
 
-// UpdateEventDescriptionJSONRequestBody defines body for UpdateEventDescription for application/json ContentType.
-type UpdateEventDescriptionJSONRequestBody UpdateEventDescriptionJSONBody
+// UpdateEventDetailsJSONRequestBody defines body for UpdateEventDetails for application/json ContentType.
+type UpdateEventDetailsJSONRequestBody UpdateEventDetailsJSONBody
+
+// DeleteTimePreferenceEventJSONRequestBody defines body for DeleteTimePreferenceEvent for application/json ContentType.
+type DeleteTimePreferenceEventJSONRequestBody DeleteTimePreferenceEventJSONBody
+
+// UpdateTimePreferenceEventJSONRequestBody defines body for UpdateTimePreferenceEvent for application/json ContentType.
+type UpdateTimePreferenceEventJSONRequestBody UpdateTimePreferenceEventJSONBody
+
+// DeleteTimePreferenceUserJSONRequestBody defines body for DeleteTimePreferenceUser for application/json ContentType.
+type DeleteTimePreferenceUserJSONRequestBody DeleteTimePreferenceUserJSONBody
+
+// CreateTimeSlotUserJSONRequestBody defines body for CreateTimeSlotUser for application/json ContentType.
+type CreateTimeSlotUserJSONRequestBody CreateTimeSlotUserJSONBody
+
+// UpdateTimePreferenceUserJSONRequestBody defines body for UpdateTimePreferenceUser for application/json ContentType.
+type UpdateTimePreferenceUserJSONRequestBody UpdateTimePreferenceUserJSONBody
 
 // PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
 type PostUsersJSONRequestBody PostUsersJSONBody

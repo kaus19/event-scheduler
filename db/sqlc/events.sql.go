@@ -7,30 +7,38 @@ package db
 
 import (
 	"context"
-	"database/sql"
+	"time"
 )
 
 const createEvent = `-- name: CreateEvent :one
-INSERT INTO events (organizer_id, event_name, event_description)
-VALUES ($1, $2, $3)
-RETURNING event_id, organizer_id, event_name, event_description, created_at
+INSERT INTO events (organizer_id, event_name, event_description, duration)
+VALUES ($1, $2, $3, $4)
+RETURNING event_id, organizer_id, event_name, event_description, duration, created_at, updated_at
 `
 
 type CreateEventParams struct {
-	OrganizerID      int32          `json:"organizer_id"`
-	EventName        string         `json:"event_name"`
-	EventDescription sql.NullString `json:"event_description"`
+	OrganizerID      int32  `json:"organizer_id"`
+	EventName        string `json:"event_name"`
+	EventDescription string `json:"event_description"`
+	Duration         int32  `json:"duration"`
 }
 
 func (q *Queries) CreateEvent(ctx context.Context, arg CreateEventParams) (Event, error) {
-	row := q.db.QueryRowContext(ctx, createEvent, arg.OrganizerID, arg.EventName, arg.EventDescription)
+	row := q.db.QueryRowContext(ctx, createEvent,
+		arg.OrganizerID,
+		arg.EventName,
+		arg.EventDescription,
+		arg.Duration,
+	)
 	var i Event
 	err := row.Scan(
 		&i.EventID,
 		&i.OrganizerID,
 		&i.EventName,
 		&i.EventDescription,
+		&i.Duration,
 		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -46,7 +54,7 @@ func (q *Queries) DeleteEvent(ctx context.Context, eventID int32) error {
 }
 
 const getEventByID = `-- name: GetEventByID :one
-SELECT event_id, organizer_id, event_name, event_description, created_at
+SELECT event_id, organizer_id, event_name, event_description, duration, created_at, updated_at
 FROM events
 WHERE event_id = $1
 `
@@ -59,13 +67,15 @@ func (q *Queries) GetEventByID(ctx context.Context, eventID int32) (Event, error
 		&i.OrganizerID,
 		&i.EventName,
 		&i.EventDescription,
+		&i.Duration,
 		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const listEvents = `-- name: ListEvents :many
-SELECT event_id, organizer_id, event_name, event_description, created_at
+SELECT event_id, organizer_id, event_name, event_description, duration, created_at, updated_at
 FROM events
 ORDER BY created_at DESC
 `
@@ -84,7 +94,9 @@ func (q *Queries) ListEvents(ctx context.Context) ([]Event, error) {
 			&i.OrganizerID,
 			&i.EventName,
 			&i.EventDescription,
+			&i.Duration,
 			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -100,7 +112,7 @@ func (q *Queries) ListEvents(ctx context.Context) ([]Event, error) {
 }
 
 const listEventsByOrganizer = `-- name: ListEventsByOrganizer :many
-SELECT event_id, organizer_id, event_name, event_description, created_at
+SELECT event_id, organizer_id, event_name, event_description, duration, created_at, updated_at
 FROM events
 WHERE organizer_id = $1
 ORDER BY created_at DESC
@@ -120,7 +132,9 @@ func (q *Queries) ListEventsByOrganizer(ctx context.Context, organizerID int32) 
 			&i.OrganizerID,
 			&i.EventName,
 			&i.EventDescription,
+			&i.Duration,
 			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -135,18 +149,27 @@ func (q *Queries) ListEventsByOrganizer(ctx context.Context, organizerID int32) 
 	return items, nil
 }
 
-const updateEventDescription = `-- name: UpdateEventDescription :exec
+const updateEvent = `-- name: UpdateEvent :exec
 UPDATE events
-SET event_description = $2
+SET event_name = $2, event_description = $3, duration = $4, updated_at = $5
 WHERE event_id = $1
 `
 
-type UpdateEventDescriptionParams struct {
-	EventID          int32          `json:"event_id"`
-	EventDescription sql.NullString `json:"event_description"`
+type UpdateEventParams struct {
+	EventID          int32     `json:"event_id"`
+	EventName        string    `json:"event_name"`
+	EventDescription string    `json:"event_description"`
+	Duration         int32     `json:"duration"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
-func (q *Queries) UpdateEventDescription(ctx context.Context, arg UpdateEventDescriptionParams) error {
-	_, err := q.db.ExecContext(ctx, updateEventDescription, arg.EventID, arg.EventDescription)
+func (q *Queries) UpdateEvent(ctx context.Context, arg UpdateEventParams) error {
+	_, err := q.db.ExecContext(ctx, updateEvent,
+		arg.EventID,
+		arg.EventName,
+		arg.EventDescription,
+		arg.Duration,
+		arg.UpdatedAt,
+	)
 	return err
 }
