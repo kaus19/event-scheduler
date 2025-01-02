@@ -9,8 +9,9 @@ import (
 )
 
 func createRandomEvent(t *testing.T) Event {
+	_, err := testQueries.CreateUser(context.Background(), "Aditya")
 	arg := CreateEventParams{
-		OrganizerID:      int32(util.RandomInt(1, 3)),
+		OrganizerID:      int32(1),
 		EventName:        util.RandomString(5),
 		EventDescription: util.RandomString(10),
 	}
