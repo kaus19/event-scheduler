@@ -305,27 +305,6 @@ func (server Server) DeleteTimePreferenceUser(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-// // (GET /time-preferences/overlapping-slots)
-// func (server Server) FindOverlappingSlots(ctx *gin.Context, params FindOverlappingSlotsParams) {
-// 	if err := ctx.ShouldBindUri(&params); err != nil {
-// 		ctx.JSON(http.StatusBadRequest, err)
-// 		return
-// 	}
-
-// 	arg := db.GetTimePreferencesByOwnerParams{
-// 		OwnerType: "user",
-// 		OwnerID:   int32(params.EventOwnerId),
-// 	}
-
-// 	slots, err := server.store.GetTimePreferencesByOwner(ctx, arg)
-// 	if err != nil {
-// 		ctx.JSON(http.StatusInternalServerError, err)
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusOK, slots)
-// }
-
 // (GET /time-slots/event)
 func (server Server) GetTimePreferencesByEvent(ctx *gin.Context, params GetTimePreferencesByEventParams) {
 
@@ -342,29 +321,6 @@ func (server Server) GetTimePreferencesByEvent(ctx *gin.Context, params GetTimeP
 
 	ctx.JSON(http.StatusOK, preferences)
 }
-
-// // (POST /time-slots/event)
-// func (server Server) CreateTimeSlotEvent(ctx *gin.Context) {
-// 	var req *CreateTimeSlotEventJSONBody
-// 	if err := ctx.ShouldBindJSON(&req); err != nil {
-// 		ctx.JSON(http.StatusBadRequest, err)
-// 		return
-// 	}
-
-// 	arg := db.CreateTimeSlotEventParams{
-// 		EventID:   1,
-// 		StartTime: time.Now().UTC(),
-// 		EndTime:   time.Now(),
-// 	}
-
-// 	resp, err := server.store.CreateTimeSlotEvent(ctx, arg)
-// 	if err != nil {
-// 		ctx.JSON(http.StatusInternalServerError, err)
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusOK, resp)
-// }
 
 // (PUT /time-slots/event)
 func (server Server) UpdateTimePreferenceEvent(ctx *gin.Context) {
@@ -461,7 +417,7 @@ func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, params GetMa
 	}
 	timeSlotDuration := time.Duration(event.Duration) * time.Hour
 
-	// Step 3: Divide Event Time Slots into Equal Durations
+	// Divide Event Time Slots into Equal Durations
 	dividedSlots := []TimeSlot{}
 	for _, slot := range eventTimeSlots {
 		for t := slot.Start; t.Before(slot.End); t = t.Add(timeSlotDuration) {
@@ -473,7 +429,7 @@ func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, params GetMa
 		}
 	}
 
-	// Step 4: Generate 2D Matrix
+	// Generate 2D Matrix
 	users := make([]int, 0, len(userTimeSlots))
 	for userID := range userTimeSlots {
 		users = append(users, userID)
@@ -494,7 +450,7 @@ func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, params GetMa
 		}
 	}
 
-	// Step 5: Find Best Time Slots
+	// Find Best Time Slots
 	res := FindBestTimeSlots(matrix, dividedSlots, users)
 
 	ctx.JSON(http.StatusOK, res)
