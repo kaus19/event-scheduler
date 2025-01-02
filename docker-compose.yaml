@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=event_scheduler
+    ports:
+      - "5432:5432"
+    networks:
+      - event-scheduler-network
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - GIN_MODE=release
+      - DB_SOURCE=postgresql://root:password@postgres:5432/event_scheduler?sslmode=disable
+    depends_on:
+      - postgres
+    entrypoint:
+      [
+        "/app/wait-for.sh",
+        "postgres:5432",
+        "--",
+        "/app/start.sh"
+      ]
+    command: [ "/app/main" ]
+    networks:
+      - event-scheduler-network
+networks:
+  event-scheduler-network:
