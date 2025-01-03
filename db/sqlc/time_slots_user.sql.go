@@ -34,30 +34,30 @@ func (q *Queries) CreateTimeSlotUser(ctx context.Context, arg CreateTimeSlotUser
 	return i, err
 }
 
-const deleteTimePreferenceUser = `-- name: DeleteTimePreferenceUser :exec
+const deleteTimeSlotUser = `-- name: DeleteTimeSlotUser :exec
 DELETE FROM time_slots_user
 WHERE id = $1 AND user_id = $2
 `
 
-type DeleteTimePreferenceUserParams struct {
+type DeleteTimeSlotUserParams struct {
 	ID     int32 `json:"id"`
 	UserID int32 `json:"user_id"`
 }
 
-func (q *Queries) DeleteTimePreferenceUser(ctx context.Context, arg DeleteTimePreferenceUserParams) error {
-	_, err := q.db.ExecContext(ctx, deleteTimePreferenceUser, arg.ID, arg.UserID)
+func (q *Queries) DeleteTimeSlotUser(ctx context.Context, arg DeleteTimeSlotUserParams) error {
+	_, err := q.db.ExecContext(ctx, deleteTimeSlotUser, arg.ID, arg.UserID)
 	return err
 }
 
-const getTimePreferencesByUser = `-- name: GetTimePreferencesByUser :many
+const getTimeSlotsByUser = `-- name: GetTimeSlotsByUser :many
 SELECT id, user_id, start_time, end_time
 FROM time_slots_user
 WHERE user_id = $1
 ORDER BY start_time
 `
 
-func (q *Queries) GetTimePreferencesByUser(ctx context.Context, userID int32) ([]TimeSlotsUser, error) {
-	rows, err := q.db.QueryContext(ctx, getTimePreferencesByUser, userID)
+func (q *Queries) GetTimeSlotsByUser(ctx context.Context, userID int32) ([]TimeSlotsUser, error) {
+	rows, err := q.db.QueryContext(ctx, getTimeSlotsByUser, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -84,26 +84,26 @@ func (q *Queries) GetTimePreferencesByUser(ctx context.Context, userID int32) ([
 	return items, nil
 }
 
-const getTimePreferencesForAllUsers = `-- name: GetTimePreferencesForAllUsers :many
+const getTimeSlotsForAllUsers = `-- name: GetTimeSlotsForAllUsers :many
 SELECT user_id, start_time, end_time
 FROM time_slots_user
 `
 
-type GetTimePreferencesForAllUsersRow struct {
+type GetTimeSlotsForAllUsersRow struct {
 	UserID    int32     `json:"user_id"`
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`
 }
 
-func (q *Queries) GetTimePreferencesForAllUsers(ctx context.Context) ([]GetTimePreferencesForAllUsersRow, error) {
-	rows, err := q.db.QueryContext(ctx, getTimePreferencesForAllUsers)
+func (q *Queries) GetTimeSlotsForAllUsers(ctx context.Context) ([]GetTimeSlotsForAllUsersRow, error) {
+	rows, err := q.db.QueryContext(ctx, getTimeSlotsForAllUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []GetTimePreferencesForAllUsersRow{}
+	items := []GetTimeSlotsForAllUsersRow{}
 	for rows.Next() {
-		var i GetTimePreferencesForAllUsersRow
+		var i GetTimeSlotsForAllUsersRow
 		if err := rows.Scan(&i.UserID, &i.StartTime, &i.EndTime); err != nil {
 			return nil, err
 		}
@@ -118,21 +118,21 @@ func (q *Queries) GetTimePreferencesForAllUsers(ctx context.Context) ([]GetTimeP
 	return items, nil
 }
 
-const updateTimePreferenceUser = `-- name: UpdateTimePreferenceUser :exec
+const updateTimeSlotUser = `-- name: UpdateTimeSlotUser :exec
 UPDATE time_slots_user
 SET start_time = $3, end_time = $4
 WHERE id = $1 AND user_id = $2
 `
 
-type UpdateTimePreferenceUserParams struct {
+type UpdateTimeSlotUserParams struct {
 	ID        int32     `json:"id"`
 	UserID    int32     `json:"user_id"`
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`
 }
 
-func (q *Queries) UpdateTimePreferenceUser(ctx context.Context, arg UpdateTimePreferenceUserParams) error {
-	_, err := q.db.ExecContext(ctx, updateTimePreferenceUser,
+func (q *Queries) UpdateTimeSlotUser(ctx context.Context, arg UpdateTimeSlotUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateTimeSlotUser,
 		arg.ID,
 		arg.UserID,
 		arg.StartTime,

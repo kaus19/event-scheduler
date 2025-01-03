@@ -109,32 +109,32 @@ func (mr *MockStoreMockRecorder) DeleteEvent(arg0, arg1 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteEvent", reflect.TypeOf((*MockStore)(nil).DeleteEvent), arg0, arg1)
 }
 
-// DeleteTimePreferenceEvent mocks base method.
-func (m *MockStore) DeleteTimePreferenceEvent(arg0 context.Context, arg1 db.DeleteTimePreferenceEventParams) error {
+// DeleteTimeSlotEvent mocks base method.
+func (m *MockStore) DeleteTimeSlotEvent(arg0 context.Context, arg1 db.DeleteTimeSlotEventParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteTimePreferenceEvent", arg0, arg1)
+	ret := m.ctrl.Call(m, "DeleteTimeSlotEvent", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteTimePreferenceEvent indicates an expected call of DeleteTimePreferenceEvent.
-func (mr *MockStoreMockRecorder) DeleteTimePreferenceEvent(arg0, arg1 interface{}) *gomock.Call {
+// DeleteTimeSlotEvent indicates an expected call of DeleteTimeSlotEvent.
+func (mr *MockStoreMockRecorder) DeleteTimeSlotEvent(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTimePreferenceEvent", reflect.TypeOf((*MockStore)(nil).DeleteTimePreferenceEvent), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTimeSlotEvent", reflect.TypeOf((*MockStore)(nil).DeleteTimeSlotEvent), arg0, arg1)
 }
 
-// DeleteTimePreferenceUser mocks base method.
-func (m *MockStore) DeleteTimePreferenceUser(arg0 context.Context, arg1 db.DeleteTimePreferenceUserParams) error {
+// DeleteTimeSlotUser mocks base method.
+func (m *MockStore) DeleteTimeSlotUser(arg0 context.Context, arg1 db.DeleteTimeSlotUserParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteTimePreferenceUser", arg0, arg1)
+	ret := m.ctrl.Call(m, "DeleteTimeSlotUser", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteTimePreferenceUser indicates an expected call of DeleteTimePreferenceUser.
-func (mr *MockStoreMockRecorder) DeleteTimePreferenceUser(arg0, arg1 interface{}) *gomock.Call {
+// DeleteTimeSlotUser indicates an expected call of DeleteTimeSlotUser.
+func (mr *MockStoreMockRecorder) DeleteTimeSlotUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTimePreferenceUser", reflect.TypeOf((*MockStore)(nil).DeleteTimePreferenceUser), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTimeSlotUser", reflect.TypeOf((*MockStore)(nil).DeleteTimeSlotUser), arg0, arg1)
 }
 
 // GetEventByID mocks base method.
@@ -152,49 +152,49 @@ func (mr *MockStoreMockRecorder) GetEventByID(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEventByID", reflect.TypeOf((*MockStore)(nil).GetEventByID), arg0, arg1)
 }
 
-// GetTimePreferencesByEvent mocks base method.
-func (m *MockStore) GetTimePreferencesByEvent(arg0 context.Context, arg1 int32) ([]db.TimeSlotsEvent, error) {
+// GetTimeSlotsByEvent mocks base method.
+func (m *MockStore) GetTimeSlotsByEvent(arg0 context.Context, arg1 int32) ([]db.TimeSlotsEvent, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTimePreferencesByEvent", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetTimeSlotsByEvent", arg0, arg1)
 	ret0, _ := ret[0].([]db.TimeSlotsEvent)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetTimePreferencesByEvent indicates an expected call of GetTimePreferencesByEvent.
-func (mr *MockStoreMockRecorder) GetTimePreferencesByEvent(arg0, arg1 interface{}) *gomock.Call {
+// GetTimeSlotsByEvent indicates an expected call of GetTimeSlotsByEvent.
+func (mr *MockStoreMockRecorder) GetTimeSlotsByEvent(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimePreferencesByEvent", reflect.TypeOf((*MockStore)(nil).GetTimePreferencesByEvent), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimeSlotsByEvent", reflect.TypeOf((*MockStore)(nil).GetTimeSlotsByEvent), arg0, arg1)
 }
 
-// GetTimePreferencesByUser mocks base method.
-func (m *MockStore) GetTimePreferencesByUser(arg0 context.Context, arg1 int32) ([]db.TimeSlotsUser, error) {
+// GetTimeSlotsByUser mocks base method.
+func (m *MockStore) GetTimeSlotsByUser(arg0 context.Context, arg1 int32) ([]db.TimeSlotsUser, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTimePreferencesByUser", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetTimeSlotsByUser", arg0, arg1)
 	ret0, _ := ret[0].([]db.TimeSlotsUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetTimePreferencesByUser indicates an expected call of GetTimePreferencesByUser.
-func (mr *MockStoreMockRecorder) GetTimePreferencesByUser(arg0, arg1 interface{}) *gomock.Call {
+// GetTimeSlotsByUser indicates an expected call of GetTimeSlotsByUser.
+func (mr *MockStoreMockRecorder) GetTimeSlotsByUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimePreferencesByUser", reflect.TypeOf((*MockStore)(nil).GetTimePreferencesByUser), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimeSlotsByUser", reflect.TypeOf((*MockStore)(nil).GetTimeSlotsByUser), arg0, arg1)
 }
 
-// GetTimePreferencesForAllUsers mocks base method.
-func (m *MockStore) GetTimePreferencesForAllUsers(arg0 context.Context) ([]db.GetTimePreferencesForAllUsersRow, error) {
+// GetTimeSlotsForAllUsers mocks base method.
+func (m *MockStore) GetTimeSlotsForAllUsers(arg0 context.Context) ([]db.GetTimeSlotsForAllUsersRow, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTimePreferencesForAllUsers", arg0)
-	ret0, _ := ret[0].([]db.GetTimePreferencesForAllUsersRow)
+	ret := m.ctrl.Call(m, "GetTimeSlotsForAllUsers", arg0)
+	ret0, _ := ret[0].([]db.GetTimeSlotsForAllUsersRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetTimePreferencesForAllUsers indicates an expected call of GetTimePreferencesForAllUsers.
-func (mr *MockStoreMockRecorder) GetTimePreferencesForAllUsers(arg0 interface{}) *gomock.Call {
+// GetTimeSlotsForAllUsers indicates an expected call of GetTimeSlotsForAllUsers.
+func (mr *MockStoreMockRecorder) GetTimeSlotsForAllUsers(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimePreferencesForAllUsers", reflect.TypeOf((*MockStore)(nil).GetTimePreferencesForAllUsers), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTimeSlotsForAllUsers", reflect.TypeOf((*MockStore)(nil).GetTimeSlotsForAllUsers), arg0)
 }
 
 // GetUserByID mocks base method.
@@ -271,30 +271,30 @@ func (mr *MockStoreMockRecorder) UpdateEvent(arg0, arg1 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEvent", reflect.TypeOf((*MockStore)(nil).UpdateEvent), arg0, arg1)
 }
 
-// UpdateTimePreferenceEvent mocks base method.
-func (m *MockStore) UpdateTimePreferenceEvent(arg0 context.Context, arg1 db.UpdateTimePreferenceEventParams) error {
+// UpdateTimeSlotEvent mocks base method.
+func (m *MockStore) UpdateTimeSlotEvent(arg0 context.Context, arg1 db.UpdateTimeSlotEventParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTimePreferenceEvent", arg0, arg1)
+	ret := m.ctrl.Call(m, "UpdateTimeSlotEvent", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateTimePreferenceEvent indicates an expected call of UpdateTimePreferenceEvent.
-func (mr *MockStoreMockRecorder) UpdateTimePreferenceEvent(arg0, arg1 interface{}) *gomock.Call {
+// UpdateTimeSlotEvent indicates an expected call of UpdateTimeSlotEvent.
+func (mr *MockStoreMockRecorder) UpdateTimeSlotEvent(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTimePreferenceEvent", reflect.TypeOf((*MockStore)(nil).UpdateTimePreferenceEvent), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTimeSlotEvent", reflect.TypeOf((*MockStore)(nil).UpdateTimeSlotEvent), arg0, arg1)
 }
 
-// UpdateTimePreferenceUser mocks base method.
-func (m *MockStore) UpdateTimePreferenceUser(arg0 context.Context, arg1 db.UpdateTimePreferenceUserParams) error {
+// UpdateTimeSlotUser mocks base method.
+func (m *MockStore) UpdateTimeSlotUser(arg0 context.Context, arg1 db.UpdateTimeSlotUserParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTimePreferenceUser", arg0, arg1)
+	ret := m.ctrl.Call(m, "UpdateTimeSlotUser", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateTimePreferenceUser indicates an expected call of UpdateTimePreferenceUser.
-func (mr *MockStoreMockRecorder) UpdateTimePreferenceUser(arg0, arg1 interface{}) *gomock.Call {
+// UpdateTimeSlotUser indicates an expected call of UpdateTimeSlotUser.
+func (mr *MockStoreMockRecorder) UpdateTimeSlotUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTimePreferenceUser", reflect.TypeOf((*MockStore)(nil).UpdateTimePreferenceUser), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTimeSlotUser", reflect.TypeOf((*MockStore)(nil).UpdateTimeSlotUser), arg0, arg1)
 }

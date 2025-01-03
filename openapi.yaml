@@ -6,7 +6,7 @@ info:
   contact:
     name: Kaustubh Maloo
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8080/v1
     description: Local server
 
 paths:
@@ -73,52 +73,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                organizer_id:
-                  type: integer
-                event_name:
-                  type: string
-                event_description:
-                  type: string
-                duration:
-                  type: integer
-                start_time:
-                  type: array
-                  items:
-                    type: string
-                    format: date-time
-                end_time:
-                  type: array
-                  items:
-                    type: string
-                    format: date-time
-              required:
-                - organizer_id
-                - event_name
-                - event_description
-                - duration
-                - start_time
-                - end_time
+              $ref: '#/components/schemas/CreateEventRequest'
       responses:
         '201':
           description: Event created successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  event_id:
-                    type: integer
-                  organizer_id:
-                    type: integer
-                  event_name:
-                    type: string
-                  event_description:
-                    type: string
-                  created_at:
-                    type: string
-                    format: date-time
+                $ref: '#/components/schemas/CreateEventResponse'
   /events/{event_id}:
     get:
       summary: Get an event by ID
@@ -135,39 +97,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  event_id:
-                    type: integer
-                  organizer_id:
-                    type: integer
-                  event_name:
-                    type: string
-                  event_description:
-                    type: string
-                  duration:
-                    type: integer
-                  start_time:
-                    type: array
-                    items:
-                      type: string
-                      format: date-time
-                  end_time:
-                    type: array
-                    items:
-                      type: string
-                      format: date-time
-                  created_at:
-                    type: string
-                    format: date-time
-                  updated_at:
-                    type: string
-                    format: date-time
+                $ref: '#/components/schemas/Event'
         '404':
           description: Event not found
     put:
-      summary: Update an event's name, description or duration
-      operationId: UpdateEventDetails
+      summary: Update an event's name, description and duration
+      operationId: UpdateEvent
       parameters:
         - name: event_id
           in: path
@@ -179,18 +114,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                event_name:
-                  type: string
-                event_description:
-                  type: string
-                duration:
-                  type: integer
-              required:
-                - event_name
-                - event_description
-                - duration
+              $ref: '#/components/schemas/UpdateEventResponse'
       responses:
         '204':
           description: Event updated successfully
@@ -220,36 +144,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    event_id:
-                      type: integer
-                    organizer_id:
-                      type: integer
-                    event_name:
-                      type: string
-                    event_description:
-                      type: string
-                    duration:
-                      type: integer
-                    start_time:
-                      type: array
-                      items:
-                        type: string
-                        format: date-time
-                    end_time:
-                      type: array
-                      items:
-                        type: string
-                        format: date-time
-                    created_at:
-                      type: string
-                      format: date-time
-                    updated_at:
-                      type: string
-                      format: date-time
+                $ref: '#/components/schemas/Event'
   /events/organizer/{organizer_id}:
     get:
       summary: List events by organizer
@@ -266,33 +161,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    event_id:
-                      type: integer
-                    organizer_id:
-                      type: integer
-                    event_name:
-                      type: string
-                    event_description:
-                      type: string
-                    duration:
-                      type: integer
-                    start_time:
-                      type: array
-                      items:
-                        type: string
-                        format: date-time
-                    end_time:
-                      type: array
-                    created_at:
-                      type: string
-                      format: date-time
-                    updated_at:
-                      type: string
-                      format: date-time
+                $ref: '#/components/schemas/Event'
 
   /time-slots/user:
     post:
@@ -303,24 +172,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                user_id:
-                  type: integer
-                start_time:
-                  type: array
-                  items:
-                    type: string
-                    format: date-time
-                end_time:
-                  type: array
-                  items:
-                    type: string
-                    format: date-time
-              required:
-                - user_id
-                - start_time
-                - end_time
+              $ref: '#/components/schemas/CreateTimeSlotUserRequest'
       responses:
         '201':
           description: User time slot created successfully
@@ -329,21 +181,10 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    user_id:
-                      type: integer
-                    start_time:
-                      type: string
-                      format: date-time
-                    end_time:
-                      type: string
-                      format: date-time
+                  $ref: '#/components/schemas/TimeSlotUserResponse'
     get:
-      summary: Get time preferences by user
-      operationId: GetTimePreferencesByUser
+      summary: Get time slots by user
+      operationId: GetTimeSlotsByUser
       parameters:
         - name: user_id
           in: query
@@ -352,120 +193,53 @@ paths:
             type: integer
       responses:
         '200':
-          description: List of user time preferences
+          description: List of user time slots
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    user_id:
-                      type: integer
-                    start_time:
-                      type: string
-                      format: date-time
-                    end_time:
-                      type: string
-                      format: date-time
+                  $ref: '#/components/schemas/TimeSlotUserResponse'
     put:
       summary: Update a user time slot
-      operationId: UpdateTimePreferenceUser
+      operationId: UpdateTimeSlotUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                user_id:
-                  type: integer
-                start_time:
-                  type: string
-                  format: date-time
-                end_time:
-                  type: string
-                  format: date-time
-              required:
-                - id
-                - user_id
-                - start_time
-                - end_time
+              $ref: '#/components/schemas/TimeSlotsUser'
       responses:
         '204':
           description: User time slot updated successfully
+        '404':
+          description: User time slot not found.
     delete:
       summary: Delete a user time slot
-      operationId: DeleteTimePreferenceUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                user_id:
-                  type: integer
-              required:
-                - id
-                - user_id
+      operationId: DeleteTimeSlotUser
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
       responses:
         '204':
           description: User time slot deleted successfully
+        '400':
+          description: Invalid input
+        '404':
+          description: User time slot not found
+
   /time-slots/event:
-    # post:
-    #   summary: Create a new event time slot
-    #   operationId: CreateTimeSlotEvent
-    #   requestBody:
-    #     required: true
-    #     content:
-    #       application/json:
-    #         schema:
-    #           type: array
-    #           items:
-    #             type: object
-    #             properties:
-    #               event_id:
-    #                 type: integer
-    #               start_time:
-    #                 type: string
-    #                 format: date-time
-    #               end_time:
-    #                 type: string
-    #                 format: date-time
-    #             required:
-    #               - event_id
-    #               - start_time
-    #               - end_time
-    #   responses:
-    #     '201':
-    #       description: Event time slot created successfully
-    #       content:
-    #         application/json:
-    #           schema:
-    #             type: array
-    #             items:
-    #               type: object
-    #               properties:
-    #                 id:
-    #                   type: integer
-    #                 event_id:
-    #                   type: integer
-    #                 start_time:
-    #                   type: string
-    #                   format: date-time
-    #                 end_time:
-    #                   type: string
-    #                   format: date-time
     get:
-      summary: Get time preferences by event
-      operationId: GetTimePreferencesByEvent
+      summary: Get time slots by event
+      operationId: GetTimeSlotsByEvent
       parameters:
         - name: event_id
           in: query
@@ -474,72 +248,51 @@ paths:
             type: integer
       responses:
         '200':
-          description: List of event time preferences
+          description: List of event time slots
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    event_id:
-                      type: integer
-                    start_time:
-                      type: string
-                      format: date-time
-                    end_time:
-                      type: string
-                      format: date-time
+                  $ref: '#/components/schemas/TimeSlotsEventResponse'
     put:
       summary: Update an event time slot
-      operationId: UpdateTimePreferenceEvent
+      operationId: UpdateTimeSlotEvent
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                event_id:
-                  type: integer
-                start_time:
-                  type: string
-                  format: date-time
-                end_time:
-                  type: string
-                  format: date-time
-              required:
-                - id
-                - event_id
-                - start_time
-                - end_time
+              $ref: '#/components/schemas/UpdateTimeSlotsEventRequest'
       responses:
         '204':
           description: Event time slot updated successfully
     delete:
       summary: Delete an event time slot
-      operationId: DeleteTimePreferenceEvent
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                event_id:
-                  type: integer
-              required:
-                - id
-                - event_id
+      operationId: DeleteTimeSlotEvent
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+            description: Unique identifier for the time slot
+        - name: event_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            description: Unique identifier for the event
       responses:
         '204':
           description: Event time slot deleted successfully
+        '400':
+          description: Invalid input provided
+        '404':
+          description: Event time slot not found
+        '500':
+          description: Internal server error
+
   /matching-slots/event:
     get:
       summary: Get matching time slots for event
@@ -590,3 +343,228 @@ components:
           type: string
           format: date-time
           example: 2023-12-31T12:34:56Z
+
+    Event:
+      type: array
+      items:
+        type: object
+        properties:
+          event_id:
+            type: integer
+            example: 1
+          organizer_id:
+            type: integer
+            example: 1
+          event_name:
+            type: string
+            example: My Event
+          event_description:
+            type: string
+            example: This is an sample event
+          duration:
+            type: integer
+            example: 1
+          start_time:
+            type: array
+            items:
+              type: string
+              format: date-time
+              example: 2023-12-31T12:34:56Z
+          end_time:
+            type: array
+            items:
+              type: string
+              format: date-time
+              example: 2023-12-31T13:34:56Z
+          created_at:
+            type: string
+            format: date-time
+            example: 2023-12-31T12:34:56Z
+          updated_at:
+            type: string
+            format: date-time
+            example: 2023-12-31T12:34:56Z
+
+    CreateEventRequest:
+      type: object
+      required:
+        - organizer_id
+        - event_name
+        - event_description
+        - duration
+        - start_time
+        - end_time
+      properties:
+        organizer_id:
+          type: integer
+          example: 1
+        event_name:
+          type: string
+          example: My Event
+        event_description:
+          type: string
+          example: This is an sample event
+        duration:
+          type: integer
+          example: 1
+        start_time:
+          type: array
+          items:
+            type: string
+            format: date-time
+            example: 2023-12-31T12:34:56Z
+        end_time:
+          type: array
+          items:
+            type: string
+            format: date-time
+            example: 2023-12-31T13:34:56Z
+
+    CreateEventResponse:
+      type: object
+      required:
+        - organizer_id
+        - event_name
+        - event_description
+        - duration
+        - start_time
+        - end_time
+      properties:
+        event_id:
+          type: integer
+          example: 1
+        organizer_id:
+          type: integer
+          example: 1
+        event_name:
+          type: string
+          example: My Event
+        event_description:
+          type: string
+          example: This is an sample event
+        created_at:
+          type: string
+          format: date-time
+          example: 2023-12-31T12:34:56Z
+
+    UpdateEventResponse:
+      type: object
+      required:
+        - event_name
+        - event_description
+        - duration
+      properties:
+        event_name:
+          type: string
+          example: My Updated Event
+        event_description:
+          type: string
+          example: This is an updated sample event
+        duration:
+          type: integer
+          example: 2
+
+    TimeSlotsUser:
+      type: object
+      required:
+        - id
+        - user_id
+        - start_time
+        - end_time
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        start_time:
+          type: string
+          format: date-time
+          example: 2023-12-31T12:34:56Z
+        end_time:
+          type: string
+          format: date-time
+          example: 2023-12-31T13:34:56Z
+  
+    CreateTimeSlotUserRequest:
+      type: object
+      required:
+        - user_id
+        - start_time
+        - end_time
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        start_time:
+          type: array
+          items:
+            type: string
+            format: date-time
+            example: 2023-12-31T12:34:56Z
+        end_time:
+          type: array
+          items:
+            type: string
+            format: date-time
+            example: 2023-12-31T13:34:56Z
+      
+    TimeSlotUserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        start_time:
+          type: string
+          format: date-time
+          example: 2023-12-31T12:34:56Z
+        end_time:
+          type: string
+          format: date-time
+          example: 2023-12-31T13:34:56Z
+
+    UpdateTimeSlotsEventRequest:
+      type: object
+      required:
+        - id
+        - event_id
+        - start_time
+        - end_time
+      properties:
+        id:
+          type: integer
+          example: 1
+        event_id:
+          type: integer
+          example: 1
+        start_time:
+          type: string
+          format: date-time
+          example: 2023-12-31T12:34:56Z
+        end_time:
+          type: string
+          format: date-time
+          example: 2023-12-31T13:34:56Z
+
+    TimeSlotsEventResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        event_id:
+          type: integer
+          example: 1
+        start_time:
+          type: string
+          format: date-time
+          example: 2023-12-31T12:34:56Z
+        end_time:
+          type: string
+          format: date-time
+          example: 2023-12-31T13:34:56Z

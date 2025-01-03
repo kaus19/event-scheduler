@@ -67,7 +67,7 @@ func (server Server) GetUsersId(ctx *gin.Context, id int) {
 // (POST /events/)
 func (server Server) CreateEvent(ctx *gin.Context) {
 
-	var req *CreateEventJSONBody
+	var req *CreateEventJSONRequestBody
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
@@ -183,14 +183,14 @@ func (server Server) ListEventsByOrganizer(ctx *gin.Context, organizerId int) {
 }
 
 // (PUT /events/{event_id})
-func (server Server) UpdateEventDetails(ctx *gin.Context, eventId int) {
+func (server Server) UpdateEvent(ctx *gin.Context, eventId int) {
 
 	if err := ctx.ShouldBindUri(&eventId); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	var req *UpdateEventDetailsJSONBody
+	var req *UpdateEventJSONRequestBody
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
@@ -214,25 +214,25 @@ func (server Server) UpdateEventDetails(ctx *gin.Context, eventId int) {
 }
 
 // (GET /time-slots/user)
-func (server Server) GetTimePreferencesByUser(ctx *gin.Context, params GetTimePreferencesByUserParams) {
+func (server Server) GetTimeSlotsByUser(ctx *gin.Context, params GetTimeSlotsByUserParams) {
 
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	preferences, err := server.store.GetTimePreferencesByUser(ctx, int32(params.UserId))
+	Slots, err := server.store.GetTimeSlotsByUser(ctx, int32(params.UserId))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, preferences)
+	ctx.JSON(http.StatusOK, Slots)
 }
 
 // (POST /time-slots/user)
 func (server Server) CreateTimeSlotUser(ctx *gin.Context) {
-	var req *CreateTimeSlotUserJSONBody
+	var req *CreateTimeSlotUserJSONRequestBody
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
@@ -260,21 +260,21 @@ func (server Server) CreateTimeSlotUser(ctx *gin.Context) {
 }
 
 // (PUT /time-slots/user)
-func (server Server) UpdateTimePreferenceUser(ctx *gin.Context) {
-	var req *UpdateTimePreferenceUserJSONBody
+func (server Server) UpdateTimeSlotUser(ctx *gin.Context) {
+	var req *UpdateTimeSlotUserJSONRequestBody
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	arg := db.UpdateTimePreferenceUserParams{
+	arg := db.UpdateTimeSlotUserParams{
 		ID:        int32(req.Id),
 		UserID:    int32(req.UserId),
 		StartTime: req.StartTime,
 		EndTime:   req.EndTime,
 	}
 
-	err := server.store.UpdateTimePreferenceUser(ctx, arg)
+	err := server.store.UpdateTimeSlotUser(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
@@ -284,19 +284,18 @@ func (server Server) UpdateTimePreferenceUser(ctx *gin.Context) {
 }
 
 // (DELETE /time-slots/user)
-func (server Server) DeleteTimePreferenceUser(ctx *gin.Context) {
-	var req *DeleteTimePreferenceUserJSONBody
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+func (server Server) DeleteTimeSlotUser(ctx *gin.Context, params DeleteTimeSlotUserParams) {
+	if err := ctx.ShouldBindUri(&params); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	arg := db.DeleteTimePreferenceUserParams{
-		ID:     int32(req.Id),
-		UserID: int32(req.UserId),
+	arg := db.DeleteTimeSlotUserParams{
+		ID:     int32(params.Id),
+		UserID: int32(params.UserId),
 	}
 
-	err := server.store.DeleteTimePreferenceUser(ctx, arg)
+	err := server.store.DeleteTimeSlotUser(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
@@ -306,38 +305,38 @@ func (server Server) DeleteTimePreferenceUser(ctx *gin.Context) {
 }
 
 // (GET /time-slots/event)
-func (server Server) GetTimePreferencesByEvent(ctx *gin.Context, params GetTimePreferencesByEventParams) {
+func (server Server) GetTimeSlotsByEvent(ctx *gin.Context, params GetTimeSlotsByEventParams) {
 
 	if err := ctx.ShouldBindUri(&params); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	preferences, err := server.store.GetTimePreferencesByEvent(ctx, int32(params.EventId))
+	Slots, err := server.store.GetTimeSlotsByEvent(ctx, int32(params.EventId))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, preferences)
+	ctx.JSON(http.StatusOK, Slots)
 }
 
 // (PUT /time-slots/event)
-func (server Server) UpdateTimePreferenceEvent(ctx *gin.Context) {
-	var req *UpdateTimePreferenceEventJSONBody
+func (server Server) UpdateTimeSlotEvent(ctx *gin.Context) {
+	var req *UpdateTimeSlotEventJSONRequestBody
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	arg := db.UpdateTimePreferenceEventParams{
+	arg := db.UpdateTimeSlotEventParams{
 		ID:        int32(req.Id),
 		EventID:   int32(req.EventId),
 		StartTime: req.StartTime,
 		EndTime:   req.EndTime,
 	}
 
-	err := server.store.UpdateTimePreferenceEvent(ctx, arg)
+	err := server.store.UpdateTimeSlotEvent(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
@@ -347,19 +346,18 @@ func (server Server) UpdateTimePreferenceEvent(ctx *gin.Context) {
 }
 
 // (DELETE /time-slots/event)
-func (server Server) DeleteTimePreferenceEvent(ctx *gin.Context) {
-	var req *DeleteTimePreferenceEventJSONBody
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+func (server Server) DeleteTimeSlotEvent(ctx *gin.Context, params DeleteTimeSlotEventParams) {
+	if err := ctx.ShouldBindUri(&params); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	arg := db.DeleteTimePreferenceEventParams{
-		ID:      int32(req.Id),
-		EventID: int32(req.EventId),
+	arg := db.DeleteTimeSlotEventParams{
+		ID:      int32(params.Id),
+		EventID: int32(params.EventId),
 	}
 
-	err := server.store.DeleteTimePreferenceEvent(ctx, arg)
+	err := server.store.DeleteTimeSlotEvent(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
@@ -375,7 +373,7 @@ func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, params GetMa
 		return
 	}
 
-	rows, err := server.store.GetTimePreferencesByEvent(ctx, int32(params.EventId))
+	rows, err := server.store.GetTimeSlotsByEvent(ctx, int32(params.EventId))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "Error 2")
 		return
@@ -392,7 +390,7 @@ func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, params GetMa
 
 	// get time slots for all users
 
-	rows1, err := server.store.GetTimePreferencesForAllUsers(ctx)
+	rows1, err := server.store.GetTimeSlotsForAllUsers(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "Error 3")
 		return

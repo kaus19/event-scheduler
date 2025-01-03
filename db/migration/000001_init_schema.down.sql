@@ -1,3 +1,4 @@
-DROP TABLE IF EXISTS time_preferences;
+DROP TABLE IF EXISTS time_slots_event;
+DROP TABLE IF EXISTS time_slots_user;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS users;

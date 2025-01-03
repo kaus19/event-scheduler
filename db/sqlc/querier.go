@@ -14,19 +14,19 @@ type Querier interface {
 	CreateTimeSlotUser(ctx context.Context, arg CreateTimeSlotUserParams) (TimeSlotsUser, error)
 	CreateUser(ctx context.Context, name string) (User, error)
 	DeleteEvent(ctx context.Context, eventID int32) error
-	DeleteTimePreferenceEvent(ctx context.Context, arg DeleteTimePreferenceEventParams) error
-	DeleteTimePreferenceUser(ctx context.Context, arg DeleteTimePreferenceUserParams) error
+	DeleteTimeSlotEvent(ctx context.Context, arg DeleteTimeSlotEventParams) error
+	DeleteTimeSlotUser(ctx context.Context, arg DeleteTimeSlotUserParams) error
 	GetEventByID(ctx context.Context, eventID int32) (Event, error)
-	GetTimePreferencesByEvent(ctx context.Context, eventID int32) ([]TimeSlotsEvent, error)
-	GetTimePreferencesByUser(ctx context.Context, userID int32) ([]TimeSlotsUser, error)
-	GetTimePreferencesForAllUsers(ctx context.Context) ([]GetTimePreferencesForAllUsersRow, error)
+	GetTimeSlotsByEvent(ctx context.Context, eventID int32) ([]TimeSlotsEvent, error)
+	GetTimeSlotsByUser(ctx context.Context, userID int32) ([]TimeSlotsUser, error)
+	GetTimeSlotsForAllUsers(ctx context.Context) ([]GetTimeSlotsForAllUsersRow, error)
 	GetUserByID(ctx context.Context, userID int32) (User, error)
 	ListEvents(ctx context.Context) ([]Event, error)
 	ListEventsByOrganizer(ctx context.Context, organizerID int32) ([]Event, error)
 	ListUsers(ctx context.Context) ([]User, error)
 	UpdateEvent(ctx context.Context, arg UpdateEventParams) error
-	UpdateTimePreferenceEvent(ctx context.Context, arg UpdateTimePreferenceEventParams) error
-	UpdateTimePreferenceUser(ctx context.Context, arg UpdateTimePreferenceUserParams) error
+	UpdateTimeSlotEvent(ctx context.Context, arg UpdateTimeSlotEventParams) error
+	UpdateTimeSlotUser(ctx context.Context, arg UpdateTimeSlotUserParams) error
 }
 
 var _ Querier = (*Queries)(nil)

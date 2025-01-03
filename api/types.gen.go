@@ -7,15 +7,8 @@ import (
 	"time"
 )
 
-// User defines model for User.
-type User struct {
-	CreatedAt time.Time `json:"created_at"`
-	Name      string    `json:"name"`
-	UserId    int       `json:"user_id"`
-}
-
-// CreateEventJSONBody defines parameters for CreateEvent.
-type CreateEventJSONBody struct {
+// CreateEventRequest defines model for CreateEventRequest.
+type CreateEventRequest struct {
 	Duration         int         `json:"duration"`
 	EndTime          []time.Time `json:"end_time"`
 	EventDescription string      `json:"event_description"`
@@ -24,11 +17,79 @@ type CreateEventJSONBody struct {
 	StartTime        []time.Time `json:"start_time"`
 }
 
-// UpdateEventDetailsJSONBody defines parameters for UpdateEventDetails.
-type UpdateEventDetailsJSONBody struct {
+// CreateEventResponse defines model for CreateEventResponse.
+type CreateEventResponse struct {
+	CreatedAt        *time.Time `json:"created_at,omitempty"`
+	EventDescription string     `json:"event_description"`
+	EventId          *int       `json:"event_id,omitempty"`
+	EventName        string     `json:"event_name"`
+	OrganizerId      int        `json:"organizer_id"`
+}
+
+// CreateTimeSlotUserRequest defines model for CreateTimeSlotUserRequest.
+type CreateTimeSlotUserRequest struct {
+	EndTime   []time.Time `json:"end_time"`
+	StartTime []time.Time `json:"start_time"`
+	UserId    int         `json:"user_id"`
+}
+
+// Event defines model for Event.
+type Event = []struct {
+	CreatedAt        *time.Time   `json:"created_at,omitempty"`
+	Duration         *int         `json:"duration,omitempty"`
+	EndTime          *[]time.Time `json:"end_time,omitempty"`
+	EventDescription *string      `json:"event_description,omitempty"`
+	EventId          *int         `json:"event_id,omitempty"`
+	EventName        *string      `json:"event_name,omitempty"`
+	OrganizerId      *int         `json:"organizer_id,omitempty"`
+	StartTime        *[]time.Time `json:"start_time,omitempty"`
+	UpdatedAt        *time.Time   `json:"updated_at,omitempty"`
+}
+
+// TimeSlotUserResponse defines model for TimeSlotUserResponse.
+type TimeSlotUserResponse struct {
+	EndTime   *time.Time `json:"end_time,omitempty"`
+	Id        *int       `json:"id,omitempty"`
+	StartTime *time.Time `json:"start_time,omitempty"`
+	UserId    *int       `json:"user_id,omitempty"`
+}
+
+// TimeSlotsEventResponse defines model for TimeSlotsEventResponse.
+type TimeSlotsEventResponse struct {
+	EndTime   *time.Time `json:"end_time,omitempty"`
+	EventId   *int       `json:"event_id,omitempty"`
+	Id        *int       `json:"id,omitempty"`
+	StartTime *time.Time `json:"start_time,omitempty"`
+}
+
+// TimeSlotsUser defines model for TimeSlotsUser.
+type TimeSlotsUser struct {
+	EndTime   time.Time `json:"end_time"`
+	Id        int       `json:"id"`
+	StartTime time.Time `json:"start_time"`
+	UserId    int       `json:"user_id"`
+}
+
+// UpdateEventResponse defines model for UpdateEventResponse.
+type UpdateEventResponse struct {
 	Duration         int    `json:"duration"`
 	EventDescription string `json:"event_description"`
 	EventName        string `json:"event_name"`
+}
+
+// UpdateTimeSlotsEventRequest defines model for UpdateTimeSlotsEventRequest.
+type UpdateTimeSlotsEventRequest struct {
+	EndTime   time.Time `json:"end_time"`
+	EventId   int       `json:"event_id"`
+	Id        int       `json:"id"`
+	StartTime time.Time `json:"start_time"`
+}
+
+// User defines model for User.
+type User struct {
+	CreatedAt time.Time `json:"created_at"`
+	Name      string    `json:"name"`
+	UserId    int       `json:"user_id"`
 }
 
 // GetMatchingTimeSlotsForEventParams defines parameters for GetMatchingTimeSlotsForEvent.
@@ -36,49 +97,26 @@ type GetMatchingTimeSlotsForEventParams struct {
 	EventId int `form:"event_id" json:"event_id"`
 }
 
-// DeleteTimePreferenceEventJSONBody defines parameters for DeleteTimePreferenceEvent.
-type DeleteTimePreferenceEventJSONBody struct {
-	EventId int `json:"event_id"`
-	Id      int `json:"id"`
-}
-
-// GetTimePreferencesByEventParams defines parameters for GetTimePreferencesByEvent.
-type GetTimePreferencesByEventParams struct {
+// DeleteTimeSlotEventParams defines parameters for DeleteTimeSlotEvent.
+type DeleteTimeSlotEventParams struct {
+	Id      int `form:"id" json:"id"`
 	EventId int `form:"event_id" json:"event_id"`
 }
 
-// UpdateTimePreferenceEventJSONBody defines parameters for UpdateTimePreferenceEvent.
-type UpdateTimePreferenceEventJSONBody struct {
-	EndTime   time.Time `json:"end_time"`
-	EventId   int       `json:"event_id"`
-	Id        int       `json:"id"`
-	StartTime time.Time `json:"start_time"`
+// GetTimeSlotsByEventParams defines parameters for GetTimeSlotsByEvent.
+type GetTimeSlotsByEventParams struct {
+	EventId int `form:"event_id" json:"event_id"`
 }
 
-// DeleteTimePreferenceUserJSONBody defines parameters for DeleteTimePreferenceUser.
-type DeleteTimePreferenceUserJSONBody struct {
-	Id     int `json:"id"`
-	UserId int `json:"user_id"`
-}
-
-// GetTimePreferencesByUserParams defines parameters for GetTimePreferencesByUser.
-type GetTimePreferencesByUserParams struct {
+// DeleteTimeSlotUserParams defines parameters for DeleteTimeSlotUser.
+type DeleteTimeSlotUserParams struct {
+	Id     int `form:"id" json:"id"`
 	UserId int `form:"user_id" json:"user_id"`
 }
 
-// CreateTimeSlotUserJSONBody defines parameters for CreateTimeSlotUser.
-type CreateTimeSlotUserJSONBody struct {
-	EndTime   []time.Time `json:"end_time"`
-	StartTime []time.Time `json:"start_time"`
-	UserId    int         `json:"user_id"`
-}
-
-// UpdateTimePreferenceUserJSONBody defines parameters for UpdateTimePreferenceUser.
-type UpdateTimePreferenceUserJSONBody struct {
-	EndTime   time.Time `json:"end_time"`
-	Id        int       `json:"id"`
-	StartTime time.Time `json:"start_time"`
-	UserId    int       `json:"user_id"`
+// GetTimeSlotsByUserParams defines parameters for GetTimeSlotsByUser.
+type GetTimeSlotsByUserParams struct {
+	UserId int `form:"user_id" json:"user_id"`
 }
 
 // PostUsersJSONBody defines parameters for PostUsers.
@@ -87,25 +125,19 @@ type PostUsersJSONBody struct {
 }
 
 // CreateEventJSONRequestBody defines body for CreateEvent for application/json ContentType.
-type CreateEventJSONRequestBody CreateEventJSONBody
+type CreateEventJSONRequestBody = CreateEventRequest
 
-// UpdateEventDetailsJSONRequestBody defines body for UpdateEventDetails for application/json ContentType.
-type UpdateEventDetailsJSONRequestBody UpdateEventDetailsJSONBody
+// UpdateEventJSONRequestBody defines body for UpdateEvent for application/json ContentType.
+type UpdateEventJSONRequestBody = UpdateEventResponse
 
-// DeleteTimePreferenceEventJSONRequestBody defines body for DeleteTimePreferenceEvent for application/json ContentType.
-type DeleteTimePreferenceEventJSONRequestBody DeleteTimePreferenceEventJSONBody
-
-// UpdateTimePreferenceEventJSONRequestBody defines body for UpdateTimePreferenceEvent for application/json ContentType.
-type UpdateTimePreferenceEventJSONRequestBody UpdateTimePreferenceEventJSONBody
-
-// DeleteTimePreferenceUserJSONRequestBody defines body for DeleteTimePreferenceUser for application/json ContentType.
-type DeleteTimePreferenceUserJSONRequestBody DeleteTimePreferenceUserJSONBody
+// UpdateTimeSlotEventJSONRequestBody defines body for UpdateTimeSlotEvent for application/json ContentType.
+type UpdateTimeSlotEventJSONRequestBody = UpdateTimeSlotsEventRequest
 
 // CreateTimeSlotUserJSONRequestBody defines body for CreateTimeSlotUser for application/json ContentType.
-type CreateTimeSlotUserJSONRequestBody CreateTimeSlotUserJSONBody
+type CreateTimeSlotUserJSONRequestBody = CreateTimeSlotUserRequest
 
-// UpdateTimePreferenceUserJSONRequestBody defines body for UpdateTimePreferenceUser for application/json ContentType.
-type UpdateTimePreferenceUserJSONRequestBody UpdateTimePreferenceUserJSONBody
+// UpdateTimeSlotUserJSONRequestBody defines body for UpdateTimeSlotUser for application/json ContentType.
+type UpdateTimeSlotUserJSONRequestBody = TimeSlotsUser
 
 // PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
 type PostUsersJSONRequestBody PostUsersJSONBody

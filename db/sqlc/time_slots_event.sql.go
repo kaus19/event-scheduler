@@ -34,30 +34,30 @@ func (q *Queries) CreateTimeSlotEvent(ctx context.Context, arg CreateTimeSlotEve
 	return i, err
 }
 
-const deleteTimePreferenceEvent = `-- name: DeleteTimePreferenceEvent :exec
+const deleteTimeSlotEvent = `-- name: DeleteTimeSlotEvent :exec
 DELETE FROM time_slots_event
 WHERE id = $1 AND event_id = $2
 `
 
-type DeleteTimePreferenceEventParams struct {
+type DeleteTimeSlotEventParams struct {
 	ID      int32 `json:"id"`
 	EventID int32 `json:"event_id"`
 }
 
-func (q *Queries) DeleteTimePreferenceEvent(ctx context.Context, arg DeleteTimePreferenceEventParams) error {
-	_, err := q.db.ExecContext(ctx, deleteTimePreferenceEvent, arg.ID, arg.EventID)
+func (q *Queries) DeleteTimeSlotEvent(ctx context.Context, arg DeleteTimeSlotEventParams) error {
+	_, err := q.db.ExecContext(ctx, deleteTimeSlotEvent, arg.ID, arg.EventID)
 	return err
 }
 
-const getTimePreferencesByEvent = `-- name: GetTimePreferencesByEvent :many
+const getTimeSlotsByEvent = `-- name: GetTimeSlotsByEvent :many
 SELECT id, event_id, start_time, end_time
 FROM time_slots_event
 WHERE event_id = $1
 ORDER BY start_time
 `
 
-func (q *Queries) GetTimePreferencesByEvent(ctx context.Context, eventID int32) ([]TimeSlotsEvent, error) {
-	rows, err := q.db.QueryContext(ctx, getTimePreferencesByEvent, eventID)
+func (q *Queries) GetTimeSlotsByEvent(ctx context.Context, eventID int32) ([]TimeSlotsEvent, error) {
+	rows, err := q.db.QueryContext(ctx, getTimeSlotsByEvent, eventID)
 	if err != nil {
 		return nil, err
 	}
@@ -84,21 +84,21 @@ func (q *Queries) GetTimePreferencesByEvent(ctx context.Context, eventID int32) 
 	return items, nil
 }
 
-const updateTimePreferenceEvent = `-- name: UpdateTimePreferenceEvent :exec
+const updateTimeSlotEvent = `-- name: UpdateTimeSlotEvent :exec
 UPDATE time_slots_event
 SET start_time = $3, end_time = $4
 WHERE id = $1 AND event_id = $2
 `
 
-type UpdateTimePreferenceEventParams struct {
+type UpdateTimeSlotEventParams struct {
 	ID        int32     `json:"id"`
 	EventID   int32     `json:"event_id"`
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`
 }
 
-func (q *Queries) UpdateTimePreferenceEvent(ctx context.Context, arg UpdateTimePreferenceEventParams) error {
-	_, err := q.db.ExecContext(ctx, updateTimePreferenceEvent,
+func (q *Queries) UpdateTimeSlotEvent(ctx context.Context, arg UpdateTimeSlotEventParams) error {
+	_, err := q.db.ExecContext(ctx, updateTimeSlotEvent,
 		arg.ID,
 		arg.EventID,
 		arg.StartTime,
