@@ -35,6 +35,8 @@ paths:
               properties:
                 name:
                   type: string
+                  minLength: 1
+                  maxLength: 50
                   example: John Doe
       responses:
         '201':
@@ -54,6 +56,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: User found.
@@ -91,6 +94,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: Event details
@@ -100,6 +104,8 @@ paths:
                 $ref: '#/components/schemas/Event'
         '404':
           description: Event not found
+        '500':
+          description: Internal server error
     put:
       summary: Update an event's name, description and duration
       operationId: UpdateEvent
@@ -109,6 +115,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       requestBody:
         required: true
         content:
@@ -120,6 +127,8 @@ paths:
           description: Event updated successfully
         '404':
           description: Event not found
+        '500':
+          description: Internal server error
     delete:
       summary: Delete an event
       operationId: DeleteEvent
@@ -129,11 +138,14 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '204':
           description: Event deleted successfully
         '404':
           description: Event not found
+        '500':
+          description: Internal server error
   /events/list:
     get:
       summary: List all events
@@ -155,6 +167,7 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: List of events organized by the given organizer
@@ -163,6 +176,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
 
+  /time-slots/user/{user_id}:
+    get:
+      summary: Get time slots by user
+      operationId: GetTimeSlotsByUser
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of user time slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeSlotUserResponse'
   /time-slots/user:
     post:
       summary: Create time slots for a user
@@ -176,24 +208,6 @@ paths:
       responses:
         '201':
           description: User time slot created successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TimeSlotUserResponse'
-    get:
-      summary: Get time slots by user
-      operationId: GetTimeSlotsByUser
-      parameters:
-        - name: user_id
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: List of user time slots
           content:
             application/json:
               schema:
@@ -223,11 +237,13 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
         - name: user_id
           in: query
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '204':
           description: User time slot deleted successfully
@@ -236,16 +252,17 @@ paths:
         '404':
           description: User time slot not found
 
-  /time-slots/event:
+  /time-slots/event/{event_id}:
     get:
       summary: Get time slots by event
       operationId: GetTimeSlotsByEvent
       parameters:
         - name: event_id
-          in: query
+          in: path
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: List of event time slots
@@ -255,6 +272,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TimeSlotsEventResponse'
+  /time-slots/event:
     put:
       summary: Update an event time slot
       operationId: UpdateTimeSlotEvent
@@ -276,12 +294,14 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
             description: Unique identifier for the time slot
         - name: event_id
           in: query
           required: true
           schema:
             type: integer
+            minimum: 1
             description: Unique identifier for the event
       responses:
         '204':
@@ -293,16 +313,17 @@ paths:
         '500':
           description: Internal server error
 
-  /matching-slots/event:
+  /matching-slots/event/{event_id}:
     get:
       summary: Get matching time slots for event
       operationId: GetMatchingTimeSlotsForEvent
       parameters:
         - name: event_id
-          in: query
+          in: path
           required: true
           schema:
             type: integer
+            minimum: 1
       responses:
         '200':
           description: List of matching time slots for event
@@ -335,9 +356,12 @@ components:
       properties:
         user_id:
           type: integer
+          minimum: 1
           example: 1
         name:
           type: string
+          minLength: 1
+          maxLength: 50
           example: John Doe
         created_at:
           type: string
@@ -351,18 +375,23 @@ components:
         properties:
           event_id:
             type: integer
+            minimum: 1
             example: 1
           organizer_id:
             type: integer
+            minimum: 1
             example: 1
           event_name:
             type: string
+            minLength: 1
+            maxLength: 50
             example: My Event
           event_description:
             type: string
             example: This is an sample event
           duration:
             type: integer
+            minimum: 1
             example: 1
           start_time:
             type: array
@@ -397,15 +426,19 @@ components:
       properties:
         organizer_id:
           type: integer
+          minimum: 1
           example: 1
         event_name:
           type: string
+          minLength: 1
+          maxLength: 50
           example: My Event
         event_description:
           type: string
           example: This is an sample event
         duration:
           type: integer
+          minimum: 1
           example: 1
         start_time:
           type: array
@@ -432,12 +465,16 @@ components:
       properties:
         event_id:
           type: integer
+          minimum: 1
           example: 1
         organizer_id:
           type: integer
+          minimum: 1
           example: 1
         event_name:
           type: string
+          minLength: 1
+          maxLength: 50
           example: My Event
         event_description:
           type: string
@@ -456,12 +493,15 @@ components:
       properties:
         event_name:
           type: string
+          minLength: 1
+          maxLength: 50
           example: My Updated Event
         event_description:
           type: string
           example: This is an updated sample event
         duration:
           type: integer
+          minimum: 1
           example: 2
 
     TimeSlotsUser:
@@ -474,9 +514,11 @@ components:
       properties:
         id:
           type: integer
+          minimum: 1
           example: 1
         user_id:
           type: integer
+          minimum: 1
           example: 1
         start_time:
           type: string
@@ -496,6 +538,7 @@ components:
       properties:
         user_id:
           type: integer
+          minimum: 1
           example: 1
         start_time:
           type: array
@@ -515,9 +558,11 @@ components:
       properties:
         id:
           type: integer
+          minimum: 1
           example: 1
         user_id:
           type: integer
+          minimum: 1
           example: 1
         start_time:
           type: string
@@ -538,9 +583,11 @@ components:
       properties:
         id:
           type: integer
+          minimum: 1
           example: 1
         event_id:
           type: integer
+          minimum: 1
           example: 1
         start_time:
           type: string
@@ -556,9 +603,11 @@ components:
       properties:
         id:
           type: integer
+          minimum: 1
           example: 1
         event_id:
           type: integer
+          minimum: 1
           example: 1
         start_time:
           type: string

@@ -32,29 +32,29 @@ type ServerInterface interface {
 	// (PUT /events/{event_id})
 	UpdateEvent(c *gin.Context, eventId int)
 	// Get matching time slots for event
-	// (GET /matching-slots/event)
-	GetMatchingTimeSlotsForEvent(c *gin.Context, params GetMatchingTimeSlotsForEventParams)
+	// (GET /matching-slots/event/{event_id})
+	GetMatchingTimeSlotsForEvent(c *gin.Context, eventId int)
 	// Delete an event time slot
 	// (DELETE /time-slots/event)
 	DeleteTimeSlotEvent(c *gin.Context, params DeleteTimeSlotEventParams)
-	// Get time slots by event
-	// (GET /time-slots/event)
-	GetTimeSlotsByEvent(c *gin.Context, params GetTimeSlotsByEventParams)
 	// Update an event time slot
 	// (PUT /time-slots/event)
 	UpdateTimeSlotEvent(c *gin.Context)
+	// Get time slots by event
+	// (GET /time-slots/event/{event_id})
+	GetTimeSlotsByEvent(c *gin.Context, eventId int)
 	// Delete a user time slot
 	// (DELETE /time-slots/user)
 	DeleteTimeSlotUser(c *gin.Context, params DeleteTimeSlotUserParams)
-	// Get time slots by user
-	// (GET /time-slots/user)
-	GetTimeSlotsByUser(c *gin.Context, params GetTimeSlotsByUserParams)
 	// Create time slots for a user
 	// (POST /time-slots/user)
 	CreateTimeSlotUser(c *gin.Context)
 	// Update a user time slot
 	// (PUT /time-slots/user)
 	UpdateTimeSlotUser(c *gin.Context)
+	// Get time slots by user
+	// (GET /time-slots/user/{user_id})
+	GetTimeSlotsByUser(c *gin.Context, userId int)
 	// List all users
 	// (GET /users)
 	GetUsers(c *gin.Context)
@@ -202,19 +202,10 @@ func (siw *ServerInterfaceWrapper) GetMatchingTimeSlotsForEvent(c *gin.Context) 
 
 	var err error
 
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetMatchingTimeSlotsForEventParams
+	// ------------- Path parameter "event_id" -------------
+	var eventId int
 
-	// ------------- Required query parameter "event_id" -------------
-
-	if paramValue := c.Query("event_id"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument event_id is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "event_id", c.Request.URL.Query(), &params.EventId)
+	err = runtime.BindStyledParameterWithOptions("simple", "event_id", c.Param("event_id"), &eventId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter event_id: %w", err), http.StatusBadRequest)
 		return
@@ -227,7 +218,7 @@ func (siw *ServerInterfaceWrapper) GetMatchingTimeSlotsForEvent(c *gin.Context) 
 		}
 	}
 
-	siw.Handler.GetMatchingTimeSlotsForEvent(c, params)
+	siw.Handler.GetMatchingTimeSlotsForEvent(c, eventId)
 }
 
 // DeleteTimeSlotEvent operation middleware
@@ -278,24 +269,28 @@ func (siw *ServerInterfaceWrapper) DeleteTimeSlotEvent(c *gin.Context) {
 	siw.Handler.DeleteTimeSlotEvent(c, params)
 }
 
+// UpdateTimeSlotEvent operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTimeSlotEvent(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateTimeSlotEvent(c)
+}
+
 // GetTimeSlotsByEvent operation middleware
 func (siw *ServerInterfaceWrapper) GetTimeSlotsByEvent(c *gin.Context) {
 
 	var err error
 
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetTimeSlotsByEventParams
+	// ------------- Path parameter "event_id" -------------
+	var eventId int
 
-	// ------------- Required query parameter "event_id" -------------
-
-	if paramValue := c.Query("event_id"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument event_id is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "event_id", c.Request.URL.Query(), &params.EventId)
+	err = runtime.BindStyledParameterWithOptions("simple", "event_id", c.Param("event_id"), &eventId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter event_id: %w", err), http.StatusBadRequest)
 		return
@@ -308,20 +303,7 @@ func (siw *ServerInterfaceWrapper) GetTimeSlotsByEvent(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetTimeSlotsByEvent(c, params)
-}
-
-// UpdateTimeSlotEvent operation middleware
-func (siw *ServerInterfaceWrapper) UpdateTimeSlotEvent(c *gin.Context) {
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.UpdateTimeSlotEvent(c)
+	siw.Handler.GetTimeSlotsByEvent(c, eventId)
 }
 
 // DeleteTimeSlotUser operation middleware
@@ -372,39 +354,6 @@ func (siw *ServerInterfaceWrapper) DeleteTimeSlotUser(c *gin.Context) {
 	siw.Handler.DeleteTimeSlotUser(c, params)
 }
 
-// GetTimeSlotsByUser operation middleware
-func (siw *ServerInterfaceWrapper) GetTimeSlotsByUser(c *gin.Context) {
-
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetTimeSlotsByUserParams
-
-	// ------------- Required query parameter "user_id" -------------
-
-	if paramValue := c.Query("user_id"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument user_id is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "user_id", c.Request.URL.Query(), &params.UserId)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter user_id: %w", err), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetTimeSlotsByUser(c, params)
-}
-
 // CreateTimeSlotUser operation middleware
 func (siw *ServerInterfaceWrapper) CreateTimeSlotUser(c *gin.Context) {
 
@@ -429,6 +378,30 @@ func (siw *ServerInterfaceWrapper) UpdateTimeSlotUser(c *gin.Context) {
 	}
 
 	siw.Handler.UpdateTimeSlotUser(c)
+}
+
+// GetTimeSlotsByUser operation middleware
+func (siw *ServerInterfaceWrapper) GetTimeSlotsByUser(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "user_id" -------------
+	var userId int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", c.Param("user_id"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter user_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetTimeSlotsByUser(c, userId)
 }
 
 // GetUsers operation middleware
@@ -514,14 +487,14 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/events/:event_id", wrapper.DeleteEvent)
 	router.GET(options.BaseURL+"/events/:event_id", wrapper.GetEventByID)
 	router.PUT(options.BaseURL+"/events/:event_id", wrapper.UpdateEvent)
-	router.GET(options.BaseURL+"/matching-slots/event", wrapper.GetMatchingTimeSlotsForEvent)
+	router.GET(options.BaseURL+"/matching-slots/event/:event_id", wrapper.GetMatchingTimeSlotsForEvent)
 	router.DELETE(options.BaseURL+"/time-slots/event", wrapper.DeleteTimeSlotEvent)
-	router.GET(options.BaseURL+"/time-slots/event", wrapper.GetTimeSlotsByEvent)
 	router.PUT(options.BaseURL+"/time-slots/event", wrapper.UpdateTimeSlotEvent)
+	router.GET(options.BaseURL+"/time-slots/event/:event_id", wrapper.GetTimeSlotsByEvent)
 	router.DELETE(options.BaseURL+"/time-slots/user", wrapper.DeleteTimeSlotUser)
-	router.GET(options.BaseURL+"/time-slots/user", wrapper.GetTimeSlotsByUser)
 	router.POST(options.BaseURL+"/time-slots/user", wrapper.CreateTimeSlotUser)
 	router.PUT(options.BaseURL+"/time-slots/user", wrapper.UpdateTimeSlotUser)
+	router.GET(options.BaseURL+"/time-slots/user/:user_id", wrapper.GetTimeSlotsByUser)
 	router.GET(options.BaseURL+"/users", wrapper.GetUsers)
 	router.POST(options.BaseURL+"/users", wrapper.PostUsers)
 	router.GET(options.BaseURL+"/users/:id", wrapper.GetUsersId)

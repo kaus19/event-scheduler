@@ -92,30 +92,15 @@ type User struct {
 	UserId    int       `json:"user_id"`
 }
 
-// GetMatchingTimeSlotsForEventParams defines parameters for GetMatchingTimeSlotsForEvent.
-type GetMatchingTimeSlotsForEventParams struct {
-	EventId int `form:"event_id" json:"event_id"`
-}
-
 // DeleteTimeSlotEventParams defines parameters for DeleteTimeSlotEvent.
 type DeleteTimeSlotEventParams struct {
 	Id      int `form:"id" json:"id"`
 	EventId int `form:"event_id" json:"event_id"`
 }
 
-// GetTimeSlotsByEventParams defines parameters for GetTimeSlotsByEvent.
-type GetTimeSlotsByEventParams struct {
-	EventId int `form:"event_id" json:"event_id"`
-}
-
 // DeleteTimeSlotUserParams defines parameters for DeleteTimeSlotUser.
 type DeleteTimeSlotUserParams struct {
 	Id     int `form:"id" json:"id"`
-	UserId int `form:"user_id" json:"user_id"`
-}
-
-// GetTimeSlotsByUserParams defines parameters for GetTimeSlotsByUser.
-type GetTimeSlotsByUserParams struct {
 	UserId int `form:"user_id" json:"user_id"`
 }
 

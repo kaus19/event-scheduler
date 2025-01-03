@@ -1,13 +1,13 @@
 CREATE TABLE users (
     "user_id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(100) NOT NULL,
+    "name" VARCHAR(50) NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE events (
     "event_id" SERIAL PRIMARY KEY,
     "organizer_id" INT NOT NULL REFERENCES users(user_id),
-    "event_name" VARCHAR(200) NOT NULL,
+    "event_name" VARCHAR(50) NOT NULL,
     "event_description" TEXT NOT NULL,
     "duration" INT NOT NULL, -- In hours
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),

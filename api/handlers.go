@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 	"time"
 
@@ -141,6 +142,10 @@ func (server Server) GetEventByID(ctx *gin.Context, eventId int) {
 
 	event, err := server.store.GetEventByID(ctx, int32(eventId))
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -158,6 +163,10 @@ func (server Server) DeleteEvent(ctx *gin.Context, eventId int) {
 
 	err := server.store.DeleteEvent(ctx, int32(eventId))
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -206,6 +215,10 @@ func (server Server) UpdateEvent(ctx *gin.Context, eventId int) {
 
 	err := server.store.UpdateEvent(ctx, arg)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -214,14 +227,14 @@ func (server Server) UpdateEvent(ctx *gin.Context, eventId int) {
 }
 
 // (GET /time-slots/user)
-func (server Server) GetTimeSlotsByUser(ctx *gin.Context, params GetTimeSlotsByUserParams) {
+func (server Server) GetTimeSlotsByUser(ctx *gin.Context, userId int) {
 
-	if err := ctx.ShouldBindUri(&params); err != nil {
+	if err := ctx.ShouldBindUri(&userId); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	Slots, err := server.store.GetTimeSlotsByUser(ctx, int32(params.UserId))
+	Slots, err := server.store.GetTimeSlotsByUser(ctx, int32(userId))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
@@ -305,14 +318,14 @@ func (server Server) DeleteTimeSlotUser(ctx *gin.Context, params DeleteTimeSlotU
 }
 
 // (GET /time-slots/event)
-func (server Server) GetTimeSlotsByEvent(ctx *gin.Context, params GetTimeSlotsByEventParams) {
+func (server Server) GetTimeSlotsByEvent(ctx *gin.Context, eventId int) {
 
-	if err := ctx.ShouldBindUri(&params); err != nil {
+	if err := ctx.ShouldBindUri(&eventId); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	Slots, err := server.store.GetTimeSlotsByEvent(ctx, int32(params.EventId))
+	Slots, err := server.store.GetTimeSlotsByEvent(ctx, int32(eventId))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
@@ -367,13 +380,13 @@ func (server Server) DeleteTimeSlotEvent(ctx *gin.Context, params DeleteTimeSlot
 }
 
 // (GET /matching-slots/event)
-func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, params GetMatchingTimeSlotsForEventParams) {
-	if err := ctx.ShouldBindUri(&params); err != nil {
+func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, eventId int) {
+	if err := ctx.ShouldBindUri(&eventId); err != nil {
 		ctx.JSON(http.StatusBadRequest, "Error 1")
 		return
 	}
 
-	rows, err := server.store.GetTimeSlotsByEvent(ctx, int32(params.EventId))
+	rows, err := server.store.GetTimeSlotsByEvent(ctx, int32(eventId))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "Error 2")
 		return
@@ -408,7 +421,7 @@ func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, params GetMa
 	}
 
 	// get duration
-	event, err := server.store.GetEventByID(ctx, int32(params.EventId))
+	event, err := server.store.GetEventByID(ctx, int32(eventId))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "Error 4")
 		return
