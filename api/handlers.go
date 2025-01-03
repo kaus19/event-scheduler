@@ -236,6 +236,10 @@ func (server Server) GetTimeSlotsByUser(ctx *gin.Context, userId int) {
 
 	Slots, err := server.store.GetTimeSlotsByUser(ctx, int32(userId))
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -289,6 +293,10 @@ func (server Server) UpdateTimeSlotUser(ctx *gin.Context) {
 
 	err := server.store.UpdateTimeSlotUser(ctx, arg)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -310,6 +318,10 @@ func (server Server) DeleteTimeSlotUser(ctx *gin.Context, params DeleteTimeSlotU
 
 	err := server.store.DeleteTimeSlotUser(ctx, arg)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -327,6 +339,10 @@ func (server Server) GetTimeSlotsByEvent(ctx *gin.Context, eventId int) {
 
 	Slots, err := server.store.GetTimeSlotsByEvent(ctx, int32(eventId))
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -351,6 +367,10 @@ func (server Server) UpdateTimeSlotEvent(ctx *gin.Context) {
 
 	err := server.store.UpdateTimeSlotEvent(ctx, arg)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -372,6 +392,10 @@ func (server Server) DeleteTimeSlotEvent(ctx *gin.Context, params DeleteTimeSlot
 
 	err := server.store.DeleteTimeSlotEvent(ctx, arg)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
@@ -379,51 +403,63 @@ func (server Server) DeleteTimeSlotEvent(ctx *gin.Context, params DeleteTimeSlot
 	ctx.Status(http.StatusNoContent)
 }
 
-// (GET /matching-slots/event)
+// (GET /matching-slots/event/{event_id})
 func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, eventId int) {
 	if err := ctx.ShouldBindUri(&eventId); err != nil {
-		ctx.JSON(http.StatusBadRequest, "Error 1")
+		ctx.JSON(http.StatusBadRequest, "Invalid EventID")
 		return
 	}
 
-	rows, err := server.store.GetTimeSlotsByEvent(ctx, int32(eventId))
+	eventTimeSlotsRows, err := server.store.GetTimeSlotsByEvent(ctx, int32(eventId))
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, "Error 2")
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, "Event not found")
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, "Error fetching Time slots for event")
 		return
 	}
 
+	// get array of time slots
 	eventTimeSlots := []TimeSlot{}
 
-	for _, row := range rows {
+	for _, eventTimeSlotsRow := range eventTimeSlotsRows {
 		var slot TimeSlot
-		slot.Start = row.StartTime
-		slot.End = row.EndTime
+		slot.Start = eventTimeSlotsRow.StartTime
+		slot.End = eventTimeSlotsRow.EndTime
 		eventTimeSlots = append(eventTimeSlots, slot)
 	}
 
 	// get time slots for all users
-
-	rows1, err := server.store.GetTimeSlotsForAllUsers(ctx)
+	usersTimeSlotsRows, err := server.store.GetTimeSlotsForAllUsers(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, "Error 3")
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, "No users time slots found")
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, "Error fetching Time slots for users")
 		return
 	}
 
 	userTimeSlots := make(map[int][]TimeSlot)
 
-	for _, row1 := range rows1 {
+	for _, usersTimeSlotsRow := range usersTimeSlotsRows {
 		var userID int
 		var slot TimeSlot
-		userID = int(row1.UserID)
-		slot.Start = row1.StartTime
-		slot.End = row1.EndTime
+		userID = int(usersTimeSlotsRow.UserID)
+		slot.Start = usersTimeSlotsRow.StartTime
+		slot.End = usersTimeSlotsRow.EndTime
 		userTimeSlots[userID] = append(userTimeSlots[userID], slot)
 	}
 
 	// get duration
 	event, err := server.store.GetEventByID(ctx, int32(eventId))
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, "Error 4")
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, "Event not found")
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, "Error fetching event duration")
 		return
 	}
 	timeSlotDuration := time.Duration(event.Duration) * time.Hour
@@ -440,7 +476,7 @@ func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, eventId int)
 		}
 	}
 
-	// Generate 2D Matrix
+	// Generate 2D Matrix [users X dividedSlots]
 	users := make([]int, 0, len(userTimeSlots))
 	for userID := range userTimeSlots {
 		users = append(users, userID)
@@ -463,8 +499,11 @@ func (server Server) GetMatchingTimeSlotsForEvent(ctx *gin.Context, eventId int)
 
 	// Find Best Time Slots
 	res := FindBestTimeSlots(matrix, dividedSlots, users)
-
-	ctx.JSON(http.StatusOK, res)
+	if len(res.AllAvailableSlots) == 0 {
+		ctx.JSON(http.StatusOK, res.PartialSlots)
+	} else {
+		ctx.JSON(http.StatusOK, res.AllAvailableSlots)
+	}
 }
 
 func FindBestTimeSlots(matrix [][]int, dividedSlots []TimeSlot, users []int) AvailabilityResult {

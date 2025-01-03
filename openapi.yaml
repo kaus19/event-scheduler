@@ -6,7 +6,7 @@ info:
   contact:
     name: Kaustubh Maloo
 servers:
-  - url: http://localhost:8080/v1
+  - url: http://localhost:8080
     description: Local server
 
 paths:
@@ -228,6 +228,8 @@ paths:
           description: User time slot updated successfully
         '404':
           description: User time slot not found.
+        '500':
+          description: Internal server error
     delete:
       summary: Delete a user time slot
       operationId: DeleteTimeSlotUser
@@ -251,6 +253,8 @@ paths:
           description: Invalid input
         '404':
           description: User time slot not found
+        '500':
+          description: Internal server error
 
   /time-slots/event/{event_id}:
     get:
@@ -333,17 +337,13 @@ paths:
                 type: array
                 items:
                   type: object
-                  properties:
-                    id:
-                      type: integer
-                    event_id:
-                      type: integer
-                    start_time:
-                      type: string
-                      format: date-time
-                    end_time:
-                      type: string
-                      format: date-time
+                  additionalProperties: true
+        '400':
+          description: Invalid input provided
+        '404':
+          description: Event not found
+        '500':
+          description: Internal server error
 
 components:
   schemas:

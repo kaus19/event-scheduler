@@ -19,6 +19,7 @@ A RESTful API in Golang for suggesting time slots for events. The API allows use
 
 ## Assumptions
 - Every user is invited to the event
+- Suggested time is shown only for users that have provided their preferred time slots
 - Event durattion currently supports only time in hours(integer)
 
 ## Technologies Used
@@ -76,3 +77,4 @@ make test
 - If an event is scheduled, then remove users available time from that slot.
 - Add unit tests to increase coverage
 - Consider creating indices and connection pool for database
+- Add API verisoning eg /v1/
